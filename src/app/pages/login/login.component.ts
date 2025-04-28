@@ -9,13 +9,13 @@ import { FormsModule } from '@angular/forms';
   imports: [FormsModule]
 })
 export class LoginComponent {
-  email: string = '';
+  user: string = '';
   password: string = '';
 
   constructor(private router: Router) { }
 
   onSubmit() {
-    console.log('Correo:', this.email);
+    console.log('Correo:', this.user);
     console.log('Contraseña:', this.password);
     this.router.navigate(['/home']);
   }
