@@ -1,22 +1,72 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../service/auth.service';
+import { IUserRequest } from '../../model/api/request/IUserRequest';
+import { CommonModule } from '@angular/common';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { HttpClientModule } from '@angular/common/http';
+import { updateSession } from '../../util/methods';
+import { HTTP_STATUS } from '../../util/constant';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
-  imports: [FormsModule]
+  imports: [CommonModule, ReactiveFormsModule, NgxPaginationModule]
 })
 export class LoginComponent {
-  user: string = '';
-  password: string = '';
 
-  constructor(private router: Router) { }
+  userRequest: IUserRequest = {} as IUserRequest;
+  userForm: FormGroup;
+
+  constructor(private router: Router, private authService: AuthService) {
+    this.userForm = new FormGroup({
+      login: new FormControl('', [Validators.required]),
+      clave: new FormControl('', [Validators.required]),
+    });
+  }
+
+  ngOnInit(): void {
+    this.userForm.reset();
+  }
+
+  setUserRequest(): void {
+    this.userRequest.cuenta = this.userForm.get('login')?.value;
+    this.userRequest.clave = this.userForm.get('clave')?.value;
+  }
 
   onSubmit() {
-    console.log('Correo:', this.user);
-    console.log('Contraseña:', this.password);
-    this.router.navigate(['/home']);
+    this.setUserRequest();
+    this.authService.login(this.userRequest).subscribe(
+      (result: any) => {
+        updateSession(result?.object);
+        this.router.navigate(['/home']);
+      },
+      (err: any) => {
+        switch (err.status) {
+          case HTTP_STATUS.NOT_FOUND:
+            Swal.close();
+            Swal.fire({
+              icon: 'error',
+              title: '¡Error!',
+              text: err.error,
+            });
+            break;
+          case HTTP_STATUS.BAD_REQUEST:
+            Swal.close();
+            Swal.fire({
+              icon: 'warning',
+              title: '¡Advertencia!',
+              text: err.error,
+            });
+            break;
+        }
+        console.log(err.status);
+
+        console.log(err);
+      }
+    );
   }
 }

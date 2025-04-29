@@ -3,19 +3,19 @@
     <div class="card-principal">
         <div class="card card-login">
             <h2 class="text-center mb-4">Sistema de Control Logístico - MOVIFY</h2>
-            <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+            <form [formGroup]="userForm">
                 <div class="mb-3">
-                    <label for="user" class="form-label">Usuario</label>
-                    <input type="user" class="form-control" id="user" name="user" [(ngModel)]="user"
+                    <label for="login" class="form-label">Usuario</label>
+                    <input type="text" class="form-control" id="login" name="login" formControlName="login"
                         placeholder="Usuario" required>
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label">Contraseña</label>
-                    <input type="password" class="form-control" id="password" name="password" [(ngModel)]="password"
+                    <label for="clave" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" id="clave" name="clave" formControlName="clave"
                         placeholder="Contraseña" required>
                 </div>
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">Iniciar Sesión</button>
+                    <button type="submit" class="btn btn-primary" (click)="onSubmit()" >Iniciar Sesión</button>
                 </div>
             </form>
         </div>
