@@ -42,7 +42,7 @@ export class LoginComponent {
     this.authService.login(this.userRequest).subscribe(
       (result: any) => {
         updateSession(result?.object);
-        this.router.navigate(['/home']);
+        window.location.reload();
       },
       (err: any) => {
         switch (err.status) {
@@ -62,10 +62,15 @@ export class LoginComponent {
               text: err.error,
             });
             break;
+          default:
+            Swal.close();
+            Swal.fire({
+              icon: 'warning',
+              title: '¡Advertencia!',
+              text: err.error,
+            });
+            break;
         }
-        console.log(err.status);
-
-        console.log(err);
       }
     );
   }
