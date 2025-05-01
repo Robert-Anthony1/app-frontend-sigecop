@@ -1,35 +1,29 @@
 <div class="d-flex" style="height: 100vh;">
-    <!-- Sidebar -->
-    <div class="bg-dark text-white p-3" style="width: 250px;">
-      <h4 class="mb-4">Menú</h4>
-      <ul class="nav flex-column">
-        <li class="nav-item">
-          <a class="nav-link text-white" href="#">Inicio</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-white" href="#">Usuarios</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-white" href="#">Reportes</a>
-        </li>
-      </ul>
-    </div>
-  
-    <!-- Main content -->
-    <div class="flex-grow-1">
-      <!-- Topbar -->
-      <nav class="navbar navbar-light bg-light justify-content-between px-4">
-        <div>
-          <strong>{{ user.name }}</strong> - <span>{{ user.role }}</span>
-        </div>
-        <button class="btn btn-outline-danger btn-sm" (click)="logout()">Cerrar sesión</button>
-      </nav>
-  
-      <!-- Main Section -->
-      <div class="container mt-4">
-        <h3>Bienvenido al Dashboard</h3>
-        <p>Contenido principal aquí...</p>
+  <!-- Sidebar -->
+  <div class="bg-dark text-white p-3" style="width: 250px;">
+    <h4 class="mb-4">Menú</h4>
+    <ul class="nav flex-column">
+      <li class="nav-item" *ngFor="let pagina of paginas">
+        <a class="nav-link text-white" [routerLink]="pagina.url">{{ pagina.nombre }}</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main content -->
+  <div class="flex-grow-1">
+    <!-- Topbar -->
+    <nav class="navbar navbar-light bg-light justify-content-between px-4">
+      <div>
+        <strong>{{ user.nombre }} {{ user.apellidoPaterno }} {{ user.apellidoMaterno }}</strong> - <span>{{
+          user.rol?.nombre }}</span>
       </div>
+      <button class="btn btn-outline-danger btn-sm" (click)="logout()">Cerrar sesión</button>
+    </nav>
+
+    <!-- Main Section -->
+    <div class="container mt-4">
+      <h3>Bienvenido al Dashboard</h3>
+      <router-outlet></router-outlet>
     </div>
   </div>
-  
+</div>

@@ -1,4 +1,4 @@
-export function verificarSession() {
+/*export function verificarSession() {
     let token = localStorage.getItem("token");
     return token && token != undefined;
 }
@@ -13,4 +13,4 @@ export function updateSession(token: string) {
 
 export function deleteSession() {
     localStorage.removeItem("token");
-}
+}*/

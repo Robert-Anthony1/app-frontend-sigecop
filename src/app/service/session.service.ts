@@ -4,17 +4,17 @@ import { IUserRequest } from '../model/api/request/IUserRequest';
 import { Observable } from 'rxjs';
 import { BASE_URL_SECURITY } from '../util/constant';
 import { IUserResponse } from '../model/api/response/IUserResponse';
-import { getToken } from '../util/methods';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private storageService: StorageService) { }
 
   infoSession(): Observable<IUserResponse> {
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${getToken()}`
+      'Authorization': `Bearer ${this.storageService.getToken()}`
     });
 
     return this.http.post<IUserResponse>(`${BASE_URL_SECURITY}/session/getInfoSession`

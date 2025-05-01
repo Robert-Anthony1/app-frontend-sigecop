@@ -6,9 +6,9 @@ import { IUserRequest } from '../../model/api/request/IUserRequest';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { HttpClientModule } from '@angular/common/http';
-import { updateSession } from '../../util/methods';
 import { HTTP_STATUS } from '../../util/constant';
 import Swal from 'sweetalert2';
+import { StorageService } from '../../service/storage.service';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +21,7 @@ export class LoginComponent {
   userRequest: IUserRequest = {} as IUserRequest;
   userForm: FormGroup;
 
-  constructor(private router: Router, private authService: AuthService) {
+  constructor(private router: Router, private authService: AuthService, private storageService: StorageService) {
     this.userForm = new FormGroup({
       login: new FormControl('', [Validators.required]),
       clave: new FormControl('', [Validators.required]),
@@ -41,8 +41,8 @@ export class LoginComponent {
     this.setUserRequest();
     this.authService.login(this.userRequest).subscribe(
       (result: any) => {
-        updateSession(result?.object);
-        window.location.reload();
+        this.storageService.updateSession(result?.object);
+        this.router.navigate(['/home']);
       },
       (err: any) => {
         switch (err.status) {

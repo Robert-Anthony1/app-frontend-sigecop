@@ -1,56 +1,62 @@
-import { AfterViewInit, Component } from '@angular/core';
-import { deleteSession } from '../../util/methods';
-import { Router } from '@angular/router';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { SessionService } from '../../service/session.service';
 import Swal from 'sweetalert2';
 import { HTTP_STATUS } from '../../util/constant';
 import { IUserResponse } from '../../model/api/response/IUserResponse';
+import { StorageService } from '../../service/storage.service';
+import { IPaginaResponse } from '../../model/api/response/IPaginaResponse';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent implements AfterViewInit {
-  paginas = [];
-  user = {
-    name: 'Juan Pérez',
-    role: 'Administrador'
-  };
+export class DashboardComponent implements OnInit {
+  paginas: IPaginaResponse[] = [];
+  user: IUserResponse = {};
 
-  constructor(private router: Router, private sessionService: SessionService) { }
+  constructor(private router: Router, private sessionService: SessionService, private storageService: StorageService) { }
 
-  ngAfterViewInit() {
-  this.sessionService.infoSession().subscribe(
-      (result: IUserResponse) => {
-        console.log(result);
-      },
-      (err: any) => {
-        switch (err.status) {
-          case HTTP_STATUS.UNAUTHORIZED:
-            Swal.close();
-            Swal.fire({
-              icon: 'error',
-              title: '¡Error!',
-              text: err.error,
-            });
-            break;
-          default:
-            Swal.close();
-            Swal.fire({
-              icon: 'warning',
-              title: '¡Advertencia!',
-              text: err.error,
-            });
-            break;
+  ngOnInit() {
+    setTimeout(() => {
+      this.sessionService.infoSession().subscribe(
+        (result: IUserResponse) => {
+          this.user = result;
+          this.paginas = result.paginas ?? [];
+        },
+        (err: any) => {
+          switch (err.status) {
+            case HTTP_STATUS.UNAUTHORIZED:
+              Swal.close();
+              Swal.fire({
+                icon: 'error',
+                title: "Error de validación de sesión, inicie sesión de nuevo porfavor",
+                confirmButtonText: "Aceptar",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.logout();
+                }
+              });
+              break;
+            default:
+              Swal.close();
+              Swal.fire({
+                icon: 'warning',
+                title: '¡Advertencia!',
+                text: err.error,
+              });
+              break;
+          }
         }
-      }
-    );
+      );
+    });
   }
 
   logout() {
-    deleteSession();
+    this.storageService.deleteSession();
     this.router.navigate(['/login']);
   }
 }
