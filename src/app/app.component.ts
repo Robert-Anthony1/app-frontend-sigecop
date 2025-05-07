@@ -1,13 +1,14 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { LoadingService } from './service/loading.service';
+import { LoadingService } from './service/util/loading.service';
 import { CommonModule } from '@angular/common';
-import { StorageService } from './service/storage.service';
+import { StorageService } from './service/util/storage.service';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, FormsModule, CommonModule],
+  imports: [RouterOutlet, FormsModule, CommonModule, NgxDatatableModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -19,7 +20,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     let verifySession = this.storageService.verificarSession();
     if (verifySession == true) {
-    //  this.router.navigate(['/home']);
+      //  this.router.navigate(['/home']);
     } else if (verifySession == false) {
       this.router.navigate(['/login']);
     } else {

@@ -1,28 +1,47 @@
 <div class="d-flex" style="height: 100vh;">
   <!-- Sidebar -->
-  <div class="bg-dark text-white p-3" style="width: 250px;">
-    <h4 class="mb-4">Menú</h4>
+  <div [ngClass]="{'sidebar': true, 'sidebar-collapsed': isSidebarCollapsed}" class="bg-dark text-white p-3"
+    *ngIf="!isSidebarCollapsed">
+    <!-- Barra superior del sidebar con el ícono de menú (hamburguesa) -->
+    <div class="d-flex justify-content-between mb-4">
+      <h5 class="text-center"><b>Sistema de Gestión de Compras y Pagos</b></h5>
+    </div>
+
+    <!-- Lista de navegación -->
     <ul class="nav flex-column">
       <li class="nav-item" *ngFor="let pagina of paginas">
-        <a class="nav-link text-white" [routerLink]="pagina.url">{{ pagina.nombre }}</a>
+        <a class="nav-link text-white d-flex align-items-center py-2" style="padding: 0px; font-size: larger;" [routerLink]="pagina.url">
+          <i class="fas fa-arrow-circle-right fa-circle mr-2" style="font-size: 17px;padding-right: 10px;padding-left: 6px;"></i>
+          <!-- Icono para cada opción -->
+          <span>{{ pagina.nombre }}</span>
+          <!-- Mostrar texto solo si el sidebar está expandido -->
+        </a>
       </li>
     </ul>
   </div>
 
   <!-- Main content -->
   <div class="flex-grow-1">
+
     <!-- Topbar -->
-    <nav class="navbar navbar-light bg-light justify-content-between px-4">
+    <nav class="navbar navbar-light bg-dark justify-content-between px-4 text-white panel-lateral">
+      <div style="width: 100px;">
+        <button class="btn btn-outline-light" (click)="toggleSidebar()">
+          <i class="fas fa-bars"></i> <!-- Icono de menú (hamburguesa) -->
+        </button>
+      </div>
+
       <div>
         <strong>{{ user.nombre }} {{ user.apellidoPaterno }} {{ user.apellidoMaterno }}</strong> - <span>{{
           user.rol?.nombre }}</span>
       </div>
-      <button class="btn btn-outline-danger btn-sm" (click)="logout()">Cerrar sesión</button>
+      <button class="btn btn-outline-light btn-sm" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+      </button>
     </nav>
 
     <!-- Main Section -->
     <div class="container mt-4">
-      <h3>Bienvenido al Dashboard</h3>
       <router-outlet></router-outlet>
     </div>
   </div>

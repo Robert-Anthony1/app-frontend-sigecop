@@ -1,10 +1,10 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { SessionService } from '../../service/session.service';
+import { SessionService } from '../../service/security/session.service';
 import Swal from 'sweetalert2';
 import { HTTP_STATUS } from '../../util/constant';
 import { IUserResponse } from '../../model/api/response/IUserResponse';
-import { StorageService } from '../../service/storage.service';
+import { StorageService } from '../../service/util/storage.service';
 import { IPaginaResponse } from '../../model/api/response/IPaginaResponse';
 import { CommonModule } from '@angular/common';
 
@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 export class DashboardComponent implements OnInit {
   paginas: IPaginaResponse[] = [];
   user: IUserResponse = {};
+  isSidebarCollapsed = false;
 
   constructor(private router: Router, private sessionService: SessionService, private storageService: StorageService) { }
 
@@ -53,6 +54,10 @@ export class DashboardComponent implements OnInit {
         }
       );
     });
+  }
+
+  toggleSidebar() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
 
   logout() {

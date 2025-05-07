@@ -1,1 +1,17 @@
-<p>usuario works!</p>
+<ngx-datatable class="bootstrap" [rows]="usuarioResult" [columns]="columns" [limit]="5" [columnMode]="'force'"
+    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'">
+
+    <ng-template #colNombreTemplate let-row="row">
+        {{ row.nombre }} {{ row.apellidoPaterno }} {{ row.apellidoMaterno }}
+    </ng-template>
+
+    <ng-template #colDocumentoTemplate let-row="row">
+        {{ row.tipoDocumento.nombre }} {{ row.apellidoPaterno }} {{ row.apellidoMaterno }}
+    </ng-template>
+
+    <ng-template #accionesTemplate let-row="row">
+        <button class="btn btn-primary btn-sm">Editar</button>
+        <button class="btn btn-danger btn-sm" style="margin-left: 5px;">Eliminar</button>
+    </ng-template>
+
+</ngx-datatable>

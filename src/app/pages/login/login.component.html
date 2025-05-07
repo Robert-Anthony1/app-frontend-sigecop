@@ -1,21 +1,33 @@
-<div class="login-container" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url('images/fondo_login.jpg');">
-    <!--<div class="login-form">-->
-    <div class="card-principal">
-        <div class="card card-login">
-            <h2 class="text-center mb-4">Sistema de Control Logístico - MOVIFY</h2>
+<div class="login-wrapper d-flex justify-content-center align-items-center vh-100" style="background-color: #f4f6f8;">
+    <div class="login-card d-flex shadow-lg rounded-4 overflow-hidden" style="width: 50%; max-width: 1200px;">
+
+        <!-- Panel informativo -->
+        <div class="info-panel p-5 text-white panel-informativo">
+            <h3 class="mb-3"><b>SIGECOP</b></h3>
+            <p class="mt-4" style="line-height: 1.6;">
+                Bienvenido a SIGECOP, el Sistema de Gestión de Compras y Pagos, diseñado para
+                optimizar el proceso de adquisiciones, desde la solicitud de cotizaciones hasta la liquidación de pagos,
+                garantizando control, trazabilidad y eficiencia en cada etapa.
+            </p>
+            <p class="mt-4"><strong>© 2025 EasySystem S.A.C.</strong></p>
+        </div>
+
+        <!-- Panel de login -->
+        <div class="form-panel p-5 bg-white" style="width: 50%;">
+            <h4 class="text-center mb-4"><b>Inicio de Sesión</b></h4>
             <form [formGroup]="userForm">
                 <div class="mb-3">
                     <label for="login" class="form-label">Usuario</label>
                     <input type="text" class="form-control" id="login" name="login" formControlName="login"
-                        placeholder="Usuario" required>
+                        placeholder="Ingrese su usuario" required>
                 </div>
-                <div class="mb-3">
+                <div class="mb-4">
                     <label for="clave" class="form-label">Contraseña</label>
                     <input type="password" class="form-control" id="clave" name="clave" formControlName="clave"
-                        placeholder="Contraseña" required>
+                        placeholder="Ingrese su contraseña" required>
                 </div>
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary" (click)="onSubmit()" >Iniciar Sesión</button>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary" (click)="onSubmit()">Iniciar Sesión</button>
                 </div>
             </form>
         </div>

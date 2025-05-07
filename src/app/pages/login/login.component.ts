@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../service/auth.service';
+import { AuthService } from '../../service/security/auth.service';
 import { IUserRequest } from '../../model/api/request/IUserRequest';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { HttpClientModule } from '@angular/common/http';
 import { HTTP_STATUS } from '../../util/constant';
 import Swal from 'sweetalert2';
-import { StorageService } from '../../service/storage.service';
+import { StorageService } from '../../service/util/storage.service';
 
 @Component({
   selector: 'app-login',
@@ -42,7 +42,7 @@ export class LoginComponent {
     this.authService.login(this.userRequest).subscribe(
       (result: any) => {
         this.storageService.updateSession(result?.object);
-        this.router.navigate(['/home']);
+        this.router.navigate(['/Home']);
       },
       (err: any) => {
         switch (err.status) {

@@ -1,5 +1,38 @@
 .nav-link:hover {
-    background-color: #495057;
-    border-radius: 4px;
-  }
-  
+  background-color: #495057;
+  border-radius: 4px;
+}
+
+.panel-lateral {
+  background-color: #003366 !important;
+}
+
+.sidebar {
+  position: relative;
+  transition: width 0.3s ease;
+  min-width: 80px;
+  max-width: 250px;
+}
+
+.sidebar-collapsed {
+  width: 0 !important;
+  overflow: hidden;
+}
+
+.sidebar-collapsed .nav-link span {
+  display: none;
+}
+
+.sidebar-collapsed .nav-link i {
+  font-size: 18px;
+}
+
+.sidebar-collapsed,
+.sidebar-expanded,
+.nav-link {
+  transition: all 0.3s ease;
+}
+
+.sidebar {
+  background-color: #003366;
+}

@@ -1,16 +1,11 @@
-/*export function verificarSession() {
-    let token = localStorage.getItem("token");
-    return token && token != undefined;
-}
+import { ClassGeneric } from "./ClassGeneric";
 
-export function getToken() {
-    return localStorage.getItem("token");
+export function setListRow(list: ClassGeneric[] | null) {
+    if (list) {
+        return list.map((item: any, index: number) => ({
+            ...item,
+            row: index + 1
+        }));
+    }
+    return [];
 }
-
-export function updateSession(token: string) {
-    localStorage.setItem("token", token);
-}
-
-export function deleteSession() {
-    localStorage.removeItem("token");
-}*/
