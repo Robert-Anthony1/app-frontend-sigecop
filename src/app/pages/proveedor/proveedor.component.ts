@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { CommonModule } from '@angular/common';
 import { setListRow } from '../../util/methods';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -41,6 +41,11 @@ export class ProveedorComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.search();
+  }
+
+  cleanSearch() {
+    this.filter = {};
     this.search();
   }
 
@@ -78,7 +83,33 @@ export class ProveedorComponent implements OnInit {
   }
 
   save() {
-
+    if (!this.record.ruc || !this.record.razonSocial || !this.record.nombreComercial) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Debe ingresar todos los valores obligatorios',
+      });
+      return;
+    }
+    this.service.save(this.record).subscribe(
+      (result: Proveedor) => {
+        this.search();
+        Swal.close();
+        Swal.fire({
+          icon: 'success',
+          title: this.record.id ? 'Actualización Exitosa' : 'Registro Exitoso',
+          text: 'El proveedor con el ruc ' + result.ruc + ' fue ' + (this.record.id ? 'actualizado' : 'registrado'),
+        });
+        this.dialogRef.close();
+      },
+      (err: any) => {
+        Swal.close();
+        Swal.fire({
+          icon: 'warning',
+          title: '¡Advertencia!',
+          text: err.error,
+        });
+      }
+    );
   }
 
   delete(value: Proveedor) {
@@ -115,14 +146,14 @@ export class ProveedorComponent implements OnInit {
 
   initTable() {
     this.columns = [
-      { name: 'Nro.', prop: 'row' },
+      { name: 'Nro.', prop: 'row', width: 30 },
       { name: 'Ruc', prop: 'ruc' },
       { name: 'Razón Social', prop: 'razonSocial' },
       { name: 'Nombre Comercial', prop: 'nombreComercial' },
       { name: 'Dirección', prop: 'direccion', },
       { name: 'Teléfono', prop: 'telefono', },
       { name: 'Correo', prop: 'correo', },
-      { name: 'Acciones', cellTemplate: this.colAccionTemplate }
+      { name: 'Acciones', cellTemplate: this.colAccionTemplate, width: 60 }
     ];
   }
 

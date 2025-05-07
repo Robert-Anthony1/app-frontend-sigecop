@@ -12,9 +12,16 @@ body {
 
 .datatable-header-inner {
     color: white;
-    background: #555050;
+    background: #003366;
+    --bs-bg-opacity: 1;
+    font-size: 15px;
+}
+
+.datatable-body-row{
+    font-size: 15px;
 }
 
 .datatable-footer-inner {
-    background-color: #614f6c;
+    background-color: #212529;
+    font-size: 13px;
 }
