@@ -72,13 +72,22 @@
     <mat-dialog-content>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Rol</mat-label>
-            <mat-select [(ngModel)]="record.rolId" required>
+            <mat-select [(ngModel)]="record.rolId" required (selectionChange)="selectRol($event)">
                 <mat-option [value]="null">Seleccione</mat-option>
                 <mat-option *ngFor="let rls of listRol" [value]="rls.id">
                     {{ rls.nombre }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
+        <!--<mat-form-field appearance="fill" class="w-100" *ngIf="viewListProveedor">
+            <mat-label>Proveedor</mat-label>
+            <mat-select [(ngModel)]="record.proveedorId" required>
+                <mat-option [value]="null">Seleccione</mat-option>
+                <mat-option *ngFor="let prv of listProveedor" [value]="prv.id">
+                    {{ prv.ruc }} - {{ prv.razonSocial }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>-->
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Nombre</mat-label>
             <input matInput [(ngModel)]="record.nombre" maxlength="50" required>

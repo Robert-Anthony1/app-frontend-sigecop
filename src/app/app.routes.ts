@@ -7,12 +7,13 @@ import { UsuarioComponent } from './pages/usuario/usuario.component';
 import { ProveedorComponent } from './pages/proveedor/proveedor.component';
 import { ProductoComponent } from './pages/producto/producto.component';
 import { CategoriaComponent } from './pages/categoria/categoria.component';
+import { SolicitudComponent } from './pages/solicitud/solicitud.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     {
         path: 'Home', component: DashboardComponent, children: [
-            { path: 'GestionSolicitudCotizacion', component: LoadingComponent },
+            { path: 'GestionSolicitudCotizacion', component: SolicitudComponent },
             { path: 'Usuarios', component: UsuarioComponent },
             { path: 'Proveedor', component: ProveedorComponent },
             { path: 'Categoria', component: CategoriaComponent },

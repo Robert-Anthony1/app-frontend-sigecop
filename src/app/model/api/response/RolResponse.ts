@@ -4,5 +4,5 @@ export class RolResponse extends ClassGeneric {
     id?: number;
     codigo?: string;
     nombre?: string;
-    esProveedor?: boolean;
+    isProveedor?: boolean;
 }

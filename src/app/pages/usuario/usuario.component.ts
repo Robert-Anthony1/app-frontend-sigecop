@@ -18,6 +18,7 @@ import { RolService } from '../../service/security/rol.service';
 import { ProveedorService } from '../../service/master/proveedor.service';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-usuario',
@@ -37,6 +38,7 @@ export class UsuarioComponent implements OnInit {
 
   listRol: RolResponse[] = [];
   listProveedor: Proveedor[] = [];
+  viewListProveedor: boolean = false;
 
   result: UserResponse[] = [];
   filter: UserRequest = {};
@@ -123,9 +125,15 @@ export class UsuarioComponent implements OnInit {
     });
   }
 
+  selectRol(event: MatSelectChange) {
+    const rolIdSelect = event.value;
+    this.listRol.find((x: RolResponse) => x.id == rolIdSelect)?.isProveedor;
+    this.viewListProveedor = rolIdSelect && this.listRol.find((x: RolResponse) => x.id == rolIdSelect)?.isProveedor;
+  }
+
   save() {
     if (!this.record.nombre || !this.record.apellidoPaterno || !this.record.apellidoMaterno
-      || !this.record.rolId || (!this.record.id && !this.record.cuenta) 
+      || !this.record.rolId || (!this.record.id && !this.record.cuenta)
       || ((!this.record.id || this.record.updatePassword) && !this.record.clave)) {
       Swal.fire({
         icon: 'warning',
