@@ -3,10 +3,10 @@ import { Router, RouterModule } from '@angular/router';
 import { SessionService } from '../../service/security/session.service';
 import Swal from 'sweetalert2';
 import { HTTP_STATUS } from '../../util/constant';
-import { IUserResponse } from '../../model/api/response/IUserResponse';
 import { StorageService } from '../../service/util/storage.service';
-import { IPaginaResponse } from '../../model/api/response/IPaginaResponse';
 import { CommonModule } from '@angular/common';
+import { UserResponse } from '../../model/api/response/UserResponse';
+import { PaginaResponse } from '../../model/api/response/PaginaResponse';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,8 +15,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
-  paginas: IPaginaResponse[] = [];
-  user: IUserResponse = {};
+  paginas: PaginaResponse[] = [];
+  user: UserResponse = {};
   isSidebarCollapsed = false;
 
   constructor(private router: Router, private sessionService: SessionService, private storageService: StorageService) { }
@@ -24,7 +24,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     setTimeout(() => {
       this.sessionService.infoSession().subscribe(
-        (result: IUserResponse) => {
+        (result: UserResponse) => {
           this.user = result;
           this.paginas = result.paginas ?? [];
         },

@@ -1,17 +1,111 @@
-<ngx-datatable class="bootstrap" [rows]="usuarioResult" [columns]="columns" [limit]="5" [columnMode]="'force'"
+<div class="mb-4">
+    <h1>Gestión de Usuarios</h1>
+    <hr>
+</div>
+
+<div class="container mb-3">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Buscar por Nombre</mat-label>
+                <input matInput [(ngModel)]="filter.nombre" maxlength="50">
+            </mat-form-field>
+        </div>
+        <div class="col-md-4 mb-4">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Buscar por Apellido Paterno</mat-label>
+                <input matInput [(ngModel)]="filter.apellidoPaterno" maxlength="50">
+            </mat-form-field>
+        </div>
+        <div class="col-md-4 mb-4">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Buscar por Apellido Materno</mat-label>
+                <input matInput [(ngModel)]="filter.apellidoMaterno" maxlength="50">
+            </mat-form-field>
+        </div>
+        <div class="col-md-4 mb-4">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Rol</mat-label>
+                <mat-select [(ngModel)]="filter.rolId">
+                    <mat-option [value]="null">Todos</mat-option>
+                    <mat-option *ngFor="let rl of listRol" [value]="rl.id">
+                        {{ rl.nombre }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div class="col-md-3 d-flex justify-content-start align-items-center mb-3">
+            <button class="btn btn-primary" (click)="search()">
+                <i class="fas fa-search"></i>
+            </button>
+            <button class="btn btn-secondary" (click)="cleanSearch()" style="margin-left: 10px;">
+                <i class="fas fa-eraser"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-success" (click)="openAdd()">
+        <i class="fas fa-plus"></i>
+    </button>
+</div>
+
+<ngx-datatable class="bootstrap" [rows]="result" [columns]="columns" [limit]="5" [columnMode]="'force'"
     [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'">
 
-    <ng-template #colNombreTemplate let-row="row">
-        {{ row.nombre }} {{ row.apellidoPaterno }} {{ row.apellidoMaterno }}
-    </ng-template>
-
-    <ng-template #colDocumentoTemplate let-row="row">
-        {{ row.tipoDocumento.nombre }} {{ row.apellidoPaterno }} {{ row.apellidoMaterno }}
-    </ng-template>
-
-    <ng-template #accionesTemplate let-row="row">
-        <button class="btn btn-primary btn-sm">Editar</button>
-        <button class="btn btn-danger btn-sm" style="margin-left: 5px;">Eliminar</button>
+    <ng-template #colAccionTemplate let-row="row">
+        <button class="btn btn-warning btn-sm" (click)="openEdit(row)">
+            <i class="fas fa-pencil"></i>
+        </button>
+        <button class="btn btn-danger btn-sm" style="margin-left: 5px;" (click)="delete(row)">
+            <i class="fas fa-trash"></i>
+        </button>
     </ng-template>
 
 </ngx-datatable>
+
+<ng-template #dialogTemplate>
+    <h2 mat-dialog-title>{{ record.id ? 'Editar Usuario' : 'Agregar Usuario' }}</h2>
+    <mat-dialog-content>
+        <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Rol</mat-label>
+            <mat-select [(ngModel)]="record.rolId" required>
+                <mat-option [value]="null">Seleccione</mat-option>
+                <mat-option *ngFor="let rls of listRol" [value]="rls.id">
+                    {{ rls.nombre }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Nombre</mat-label>
+            <input matInput [(ngModel)]="record.nombre" maxlength="50" required>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Apellido Paterno</mat-label>
+            <input matInput [(ngModel)]="record.apellidoPaterno" maxlength="50" required>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Apellido Materno</mat-label>
+            <input matInput [(ngModel)]="record.apellidoMaterno" maxlength="50" required>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="!record.id" appearance="fill" class="w-100">
+            <mat-label>Cuenta</mat-label>
+            <input matInput [(ngModel)]="record.cuenta" maxlength="50" required>
+        </mat-form-field>
+        <mat-slide-toggle *ngIf="record.id" [(ngModel)]="record.updatePassword" style="padding-bottom: 20px;">
+            <span>¿Desea actualizar contraseña?</span>
+        </mat-slide-toggle>
+        <mat-form-field *ngIf="!record.id || record.updatePassword" appearance="fill" class="w-100">
+            <mat-label>Contraseña</mat-label>
+            <input matInput [(ngModel)]="record.clave" type="password" maxlength="15" required>
+        </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button (click)="dialogRef.close()">Cancelar</button>
+        <button mat-flat-button color="primary" (click)="save()">Guardar</button>
+    </mat-dialog-actions>
+</ng-template>

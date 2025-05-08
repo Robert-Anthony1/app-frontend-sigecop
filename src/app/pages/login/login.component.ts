@@ -2,13 +2,13 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../service/security/auth.service';
-import { IUserRequest } from '../../model/api/request/IUserRequest';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { HttpClientModule } from '@angular/common/http';
 import { HTTP_STATUS } from '../../util/constant';
 import Swal from 'sweetalert2';
 import { StorageService } from '../../service/util/storage.service';
+import { UserRequest } from '../../model/api/request/UserRequest';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +18,7 @@ import { StorageService } from '../../service/util/storage.service';
 })
 export class LoginComponent {
 
-  userRequest: IUserRequest = {} as IUserRequest;
+  userRequest: UserRequest = {} as UserRequest;
   userForm: FormGroup;
 
   constructor(private router: Router, private authService: AuthService, private storageService: StorageService) {

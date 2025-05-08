@@ -1,15 +1,15 @@
-export interface IUserRequest {
+import { ClassGeneric } from "../../../util/ClassGeneric";
+
+export class UserRequest extends ClassGeneric{
 
     id?: number;
     rolId?: number;
-    tipoDocumentoId?: number;
+    proveedorId?: number;
     nombre?: string;
     apellidoPaterno?: string;
     apellidoMaterno?: string;
-    empresa?: string;
-    correo?: string;
+    
     updatePassword?: boolean;
-
     cuenta?: string;
     clave?: string;
 }

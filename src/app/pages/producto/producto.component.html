@@ -61,7 +61,7 @@
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Categoría</mat-label>
             <mat-select [(ngModel)]="record.categoriaId" required>
-                <mat-option [value]="null">Todas</mat-option>
+                <mat-option [value]="null">Seleccione</mat-option>
                 <mat-option *ngFor="let cat of listCategoria" [value]="cat.id">
                     {{ cat.nombre }}
                 </mat-option>
