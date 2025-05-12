@@ -9,20 +9,16 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { UserResponse } from '../../model/api/response/UserResponse';
-import { UserRequest } from '../../model/api/request/UserRequest';
 import { RolResponse } from '../../model/api/response/RolResponse';
-import { Proveedor } from '../../model/dto/Proveedor';
-import { UsuarioService } from '../../service/security/usuario.service';
-import { RolService } from '../../service/security/rol.service';
-import { ProveedorService } from '../../service/master/proveedor.service';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSelectChange } from '@angular/material/select';
 import { RolRequest } from '../../model/api/request/RolRequest';
+import { RolService } from '../../service/security/rol.service';
+import { PaginaService } from '../../service/security/pagina.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import { Pagina } from '../../model/dto/Pagina';
 
 @Component({
-  selector: 'app-usuario',
+  selector: 'app-rol',
   imports: [CommonModule,
     NgxDatatableModule,
     MatDialogModule,
@@ -30,20 +26,18 @@ import { RolRequest } from '../../model/api/request/RolRequest';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
-    MatSlideToggleModule,
+    MatOptionModule,
     FormsModule],
-  templateUrl: './usuario.component.html',
-  styleUrl: './usuario.component.css'
+  templateUrl: './rol.component.html',
+  styleUrl: './rol.component.css'
 })
-export class UsuarioComponent implements OnInit {
+export class RolComponent implements OnInit {
 
-  listRol: RolResponse[] = [];
-  listProveedor: Proveedor[] = [];
-  viewListProveedor: boolean = false;
+  listPagina: Pagina[] = [];
 
-  result: UserResponse[] = [];
-  filter: UserRequest = {};
-  record: UserRequest = {};
+  result: RolResponse[] = [];
+  filter: RolRequest = new RolRequest();
+  record: RolRequest = new RolRequest();
   columns: any[] = [];
 
   @ViewChild('colAccionTemplate', { static: true }) colAccionTemplate!: TemplateRef<any>;
@@ -52,20 +46,17 @@ export class UsuarioComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private usuarioService: UsuarioService,
-    private rolService: RolService,
-    private proveedorService: ProveedorService
+    private service: RolService,
+    private paginaService: PaginaService
   ) { }
 
   ngOnInit() {
-    forkJoin({
-      resultRol: this.rolService.list(new RolRequest()),
-      resultProveedor: this.proveedorService.list({}),
-    }).subscribe({
-      next: ({ resultRol, resultProveedor }) => {
-        this.listProveedor = resultProveedor;
-        this.listRol = resultRol;
 
+    forkJoin({
+      resultPagina: this.paginaService.list({})
+    }).subscribe({
+      next: ({ resultPagina }) => {
+        this.listPagina = resultPagina;
         this.search();
       },
       error: (err) => {
@@ -73,23 +64,24 @@ export class UsuarioComponent implements OnInit {
         Swal.fire({
           icon: 'warning',
           title: '¡Advertencia!',
-          text: 'Error al inicializar ' + err.error,
+          text: err.error,
         });
       }
     });
   }
 
   cleanSearch() {
-    this.filter = {};
+    this.filter = new RolRequest();
     this.search();
   }
 
   search() {
     forkJoin({
-      resultResponse: this.usuarioService.list(this.filter)
+      resultResponse: this.service.list(this.filter)
     }).subscribe({
       next: ({ resultResponse }) => {
-        this.result = setListRow(resultResponse);
+        console.log(resultResponse);
+        this.result = [...setListRow(resultResponse)];
         this.initTable();
       },
       error: (err) => {
@@ -104,52 +96,49 @@ export class UsuarioComponent implements OnInit {
   }
 
   openAdd() {
-    this.record = {};
+    this.record = new RolRequest();
     this.dialogRef = this.dialog.open(this.dialogTemplate, {
       width: '400px'
     });
   }
 
-  openEdit(value: UserResponse) {
-    this.record = {
-      id: value.id,
-      rolId: value.rol?.id,
-      proveedorId: value.proveedor?.id,
-      nombre: value.nombre,
-      apellidoPaterno: value.apellidoPaterno,
-      apellidoMaterno: value.apellidoMaterno,
-      updatePassword: false,
-      clave: '',
-    };
-    this.dialogRef = this.dialog.open(this.dialogTemplate, {
-      width: '400px'
+  openEdit(value: RolResponse) {
+    forkJoin({
+      resultResponse: this.service.find({ id: value.id })
+    }).subscribe({
+      next: ({ resultResponse }) => {
+        this.record = resultResponse;
+        this.dialogRef = this.dialog.open(this.dialogTemplate, {
+          width: '400px'
+        });
+      },
+      error: (err) => {
+        Swal.close();
+        Swal.fire({
+          icon: 'warning',
+          title: '¡Advertencia!',
+          text: err.error,
+        });
+      }
     });
-  }
-
-  selectRol(event: MatSelectChange) {
-    const rolIdSelect = event.value;
-    this.listRol.find((x: RolResponse) => x.id == rolIdSelect)?.isProveedor;
-    this.viewListProveedor = rolIdSelect && this.listRol.find((x: RolResponse) => x.id == rolIdSelect)?.isProveedor;
   }
 
   save() {
-    if (!this.record.nombre || !this.record.apellidoPaterno || !this.record.apellidoMaterno
-      || !this.record.rolId || (!this.record.id && !this.record.cuenta)
-      || ((!this.record.id || this.record.updatePassword) && !this.record.clave)) {
+    if (!this.record.nombre || !this.record.codigo) {
       Swal.fire({
         icon: 'warning',
         title: 'Debe ingresar todos los valores obligatorios',
       });
       return;
     }
-    this.usuarioService.save(this.record).subscribe(
-      (result: UserResponse) => {
+    this.service.save(this.record).subscribe(
+      (result: RolResponse) => {
         this.search();
         Swal.close();
         Swal.fire({
           icon: 'success',
           title: this.record.id ? 'Actualización Exitosa' : 'Registro Exitoso',
-          text: 'El usuario ' + result.nombre + ' fue ' + (this.record.id ? 'actualizado' : 'registrado'),
+          text: 'El rol ' + result.nombre + ' fue ' + (this.record.id ? 'actualizado' : 'registrado'),
         });
         this.dialogRef.close();
       },
@@ -164,23 +153,23 @@ export class UsuarioComponent implements OnInit {
     );
   }
 
-  delete(value: UserResponse) {
+  delete(value: RolResponse) {
     Swal.fire({
-      title: '¿Está seguro de eliminar el usuario seleccionado?',
+      title: '¿Está seguro de eliminar el rol seleccionado?',
       showCancelButton: true,
       cancelButtonText: 'No',
       confirmButtonText: 'Si',
       focusCancel: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        this.usuarioService.delete(value).subscribe(
-          (result: UserResponse) => {
+        this.service.delete({ id: value.id }).subscribe(
+          (result: RolResponse) => {
             this.search();
             Swal.close();
             Swal.fire({
               icon: 'success',
               title: 'Eliminación Exitosa',
-              text: 'El usuario ' + result.nombre + ' fue eliminado',
+              text: 'El rol ' + result.nombre + ' fue eliminado',
             });
           },
           (err: any) => {
@@ -199,11 +188,8 @@ export class UsuarioComponent implements OnInit {
   initTable() {
     this.columns = [
       { name: 'Nro.', prop: 'row', width: 40 },
-      { name: 'Rol', prop: 'rol.nombre' },
+      { name: 'Código', prop: 'codigo' },
       { name: 'Nombre', prop: 'nombre' },
-      { name: 'Apellido Paterno', prop: 'apellidoPaterno' },
-      { name: 'Apellido Materno', prop: 'apellidoMaterno' },
-      { name: 'Cuenta', prop: 'cuenta' },
       { name: 'Acciones', cellTemplate: this.colAccionTemplate, width: 80 }
     ];
   }

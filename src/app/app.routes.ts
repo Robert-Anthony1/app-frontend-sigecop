@@ -8,6 +8,8 @@ import { ProveedorComponent } from './pages/proveedor/proveedor.component';
 import { ProductoComponent } from './pages/producto/producto.component';
 import { CategoriaComponent } from './pages/categoria/categoria.component';
 import { SolicitudComponent } from './pages/solicitud/solicitud.component';
+import { PaginaComponent } from './pages/pagina/pagina.component';
+import { RolComponent } from './pages/rol/rol.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -17,7 +19,9 @@ export const routes: Routes = [
             { path: 'Usuarios', component: UsuarioComponent },
             { path: 'Proveedor', component: ProveedorComponent },
             { path: 'Categoria', component: CategoriaComponent },
-            { path: 'Producto', component: ProductoComponent }
+            { path: 'Producto', component: ProductoComponent },
+            { path: 'Pagina', component: PaginaComponent },
+            { path: 'Rol', component: RolComponent }
         ]
     },
     { path: 'loading', component: LoadingComponent },

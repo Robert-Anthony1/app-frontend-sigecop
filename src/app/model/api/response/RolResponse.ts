@@ -5,4 +5,9 @@ export class RolResponse extends ClassGeneric {
     codigo?: string;
     nombre?: string;
     isProveedor?: boolean;
+    paginas: number[] = [];
+
+    constructor() {
+        super();
+    }
 }

@@ -6,7 +6,7 @@ import { HTTP_STATUS } from '../../util/constant';
 import { StorageService } from '../../service/util/storage.service';
 import { CommonModule } from '@angular/common';
 import { UserResponse } from '../../model/api/response/UserResponse';
-import { PaginaResponse } from '../../model/api/response/PaginaResponse';
+import { Pagina } from '../../model/dto/Pagina';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,7 +15,7 @@ import { PaginaResponse } from '../../model/api/response/PaginaResponse';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
-  paginas: PaginaResponse[] = [];
+  paginas: Pagina[] = [];
   user: UserResponse = {};
   isSidebarCollapsed = false;
 

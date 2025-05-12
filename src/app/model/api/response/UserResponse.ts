@@ -1,6 +1,6 @@
 import { ClassGeneric } from "../../../util/ClassGeneric";
+import { Pagina } from "../../dto/Pagina";
 import { Proveedor } from "../../dto/Proveedor";
-import { PaginaResponse } from "./PaginaResponse";
 import { RolResponse } from "./RolResponse";
 
 export class UserResponse extends ClassGeneric {
@@ -10,5 +10,5 @@ export class UserResponse extends ClassGeneric {
     nombre?: string;
     apellidoPaterno?: string;
     apellidoMaterno?: string;
-    paginas?: PaginaResponse[];
+    paginas?: Pagina[];
 }

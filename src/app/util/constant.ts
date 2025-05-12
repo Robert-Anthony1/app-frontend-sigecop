@@ -1,4 +1,4 @@
-//export const BASE_URL = 'https://app-backend-ccl-security.onrender.com/api/v1';
+//export const BASE_URL = 'https://app-backend-sigecop.onrender.com/api/v1';
 export const BASE_URL = 'http://localhost:8080/api/v1';
 
 export const HTTP_STATUS = {
