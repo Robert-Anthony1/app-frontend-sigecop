@@ -56,6 +56,13 @@
 <ngx-datatable class="bootstrap" [rows]="result" [columns]="columns" [limit]="5" [columnMode]="'force'"
     [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'">
 
+    <ng-template #colRolTemplate let-row="row">
+        {{row.rol.nombre}}
+        <div *ngIf="row.proveedor?.id" style="font-size: small; font-weight: bold;">
+            {{row.proveedor.ruc}} - {{row.proveedor.razonSocial}} 
+        </div>
+    </ng-template>
+
     <ng-template #colAccionTemplate let-row="row">
         <button class="btn btn-warning btn-sm" (click)="openEdit(row)">
             <i class="fas fa-pencil"></i>
@@ -79,7 +86,7 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <!--<mat-form-field appearance="fill" class="w-100" *ngIf="viewListProveedor">
+        <mat-form-field appearance="fill" class="w-100" *ngIf="viewListProveedor">
             <mat-label>Proveedor</mat-label>
             <mat-select [(ngModel)]="record.proveedorId" required>
                 <mat-option [value]="null">Seleccione</mat-option>
@@ -87,7 +94,7 @@
                     {{ prv.ruc }} - {{ prv.razonSocial }}
                 </mat-option>
             </mat-select>
-        </mat-form-field>-->
+        </mat-form-field>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Nombre</mat-label>
             <input matInput [(ngModel)]="record.nombre" maxlength="50" required>

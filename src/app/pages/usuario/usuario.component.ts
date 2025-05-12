@@ -46,6 +46,7 @@ export class UsuarioComponent implements OnInit {
   record: UserRequest = {};
   columns: any[] = [];
 
+  @ViewChild('colRolTemplate', { static: true }) colRolTemplate!: TemplateRef<any>;
   @ViewChild('colAccionTemplate', { static: true }) colAccionTemplate!: TemplateRef<any>;
   @ViewChild('dialogTemplate', { static: true }) dialogTemplate!: TemplateRef<any>;
   dialogRef!: MatDialogRef<any>;
@@ -105,6 +106,7 @@ export class UsuarioComponent implements OnInit {
 
   openAdd() {
     this.record = {};
+    this.initVisibleListProveedor(null);
     this.dialogRef = this.dialog.open(this.dialogTemplate, {
       width: '400px'
     });
@@ -121,6 +123,7 @@ export class UsuarioComponent implements OnInit {
       updatePassword: false,
       clave: '',
     };
+    this.initVisibleListProveedor(value.rol?.id);
     this.dialogRef = this.dialog.open(this.dialogTemplate, {
       width: '400px'
     });
@@ -128,14 +131,21 @@ export class UsuarioComponent implements OnInit {
 
   selectRol(event: MatSelectChange) {
     const rolIdSelect = event.value;
-    this.listRol.find((x: RolResponse) => x.id == rolIdSelect)?.isProveedor;
+    this.initVisibleListProveedor(rolIdSelect);
+  }
+
+  initVisibleListProveedor(rolIdSelect: any) {
     this.viewListProveedor = rolIdSelect && this.listRol.find((x: RolResponse) => x.id == rolIdSelect)?.isProveedor;
   }
 
   save() {
+    let esProv = this.listRol.find((x: RolResponse) => x.id == this.record.rolId)?.isProveedor;
+    console.log(esProv);
+    console.log(this.record.proveedorId);
     if (!this.record.nombre || !this.record.apellidoPaterno || !this.record.apellidoMaterno
       || !this.record.rolId || (!this.record.id && !this.record.cuenta)
-      || ((!this.record.id || this.record.updatePassword) && !this.record.clave)) {
+      || ((!this.record.id || this.record.updatePassword) && !this.record.clave)
+      || (esProv && !this.record.proveedorId)) {
       Swal.fire({
         icon: 'warning',
         title: 'Debe ingresar todos los valores obligatorios',
@@ -198,13 +208,13 @@ export class UsuarioComponent implements OnInit {
 
   initTable() {
     this.columns = [
-      { name: 'Nro.', prop: 'row', width: 40 },
-      { name: 'Rol', prop: 'rol.nombre' },
-      { name: 'Nombre', prop: 'nombre' },
-      { name: 'Apellido Paterno', prop: 'apellidoPaterno' },
-      { name: 'Apellido Materno', prop: 'apellidoMaterno' },
-      { name: 'Cuenta', prop: 'cuenta' },
-      { name: 'Acciones', cellTemplate: this.colAccionTemplate, width: 80 }
+      { name: 'Nro.', prop: 'row', width: 20 },
+      { name: 'Rol', cellTemplate: this.colRolTemplate, width: 110 },
+      { name: 'Nombre', prop: 'nombre', width: 40 },
+      { name: 'Apellido Paterno', prop: 'apellidoPaterno', width: 40 },
+      { name: 'Apellido Materno', prop: 'apellidoMaterno', width: 40 },
+      { name: 'Cuenta', prop: 'cuenta', width: 40 },
+      { name: 'Acciones', cellTemplate: this.colAccionTemplate, width: 50 }
     ];
   }
 
