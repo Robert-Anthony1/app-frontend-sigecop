@@ -11,6 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Categoria } from '../../model/dto/Categoria';
 import { CategoriaService } from '../../service/master/categoria.service';
+import { RegexConstants } from '../../util/constant';
 @Component({
   selector: 'app-categoria',
   imports: [CommonModule,
@@ -24,6 +25,8 @@ import { CategoriaService } from '../../service/master/categoria.service';
   styleUrl: './categoria.component.css'
 })
 export class CategoriaComponent implements OnInit {
+
+  public RG = RegexConstants;
 
   result: Categoria[] = [];
   filter: Categoria = {};

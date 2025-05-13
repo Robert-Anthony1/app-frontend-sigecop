@@ -11,6 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Pagina } from '../../model/dto/Pagina';
 import { PaginaService } from '../../service/security/pagina.service';
+import { RegexConstants } from '../../util/constant';
 
 @Component({
   selector: 'app-pagina',
@@ -25,6 +26,8 @@ import { PaginaService } from '../../service/security/pagina.service';
   styleUrl: './pagina.component.css'
 })
 export class PaginaComponent implements OnInit {
+
+  public RG = RegexConstants;
 
   result: Pagina[] = [];
   filter: Pagina = {};

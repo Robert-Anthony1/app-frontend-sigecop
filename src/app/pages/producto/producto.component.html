@@ -19,7 +19,7 @@
         <div class="col-md-3 mb-3">
             <mat-form-field appearance="fill" class="w-100">
                 <mat-label>Buscar por Nombre</mat-label>
-                <input matInput [(ngModel)]="filter.nombre" maxlength="200">
+                <input matInput [(ngModel)]="filter.nombre" (input)="RG.text($event)" maxlength="200">
             </mat-form-field>
         </div>
 
@@ -69,11 +69,11 @@
         </mat-form-field>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Nombre</mat-label>
-            <input matInput [(ngModel)]="record.nombre" maxlength="200" required>
+            <input matInput [(ngModel)]="record.nombre" maxlength="200" (input)="RG.text($event)" required>
         </mat-form-field>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Descripción</mat-label>
-            <textarea matInput rows="4" [(ngModel)]="record.descripcion" maxlength="500"></textarea>
+            <textarea matInput rows="4" [(ngModel)]="record.descripcion" maxlength="500" (input)="RG.text($event)"></textarea>
         </mat-form-field>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Precio</mat-label>

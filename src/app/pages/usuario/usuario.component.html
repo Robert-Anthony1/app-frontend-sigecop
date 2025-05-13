@@ -8,19 +8,19 @@
         <div class="col-md-4 mb-4">
             <mat-form-field appearance="fill" class="w-100">
                 <mat-label>Buscar por Nombre</mat-label>
-                <input matInput [(ngModel)]="filter.nombre" maxlength="50">
+                <input matInput [(ngModel)]="filter.nombre" (input)="RG.name($event)" maxlength="50">
             </mat-form-field>
         </div>
         <div class="col-md-4 mb-4">
             <mat-form-field appearance="fill" class="w-100">
                 <mat-label>Buscar por Apellido Paterno</mat-label>
-                <input matInput [(ngModel)]="filter.apellidoPaterno" maxlength="50">
+                <input matInput [(ngModel)]="filter.apellidoPaterno" (input)="RG.name($event)" maxlength="50">
             </mat-form-field>
         </div>
         <div class="col-md-4 mb-4">
             <mat-form-field appearance="fill" class="w-100">
                 <mat-label>Buscar por Apellido Materno</mat-label>
-                <input matInput [(ngModel)]="filter.apellidoMaterno" maxlength="50">
+                <input matInput [(ngModel)]="filter.apellidoMaterno" (input)="RG.name($event)" maxlength="50">
             </mat-form-field>
         </div>
         <div class="col-md-4 mb-4">
@@ -97,20 +97,19 @@
         </mat-form-field>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Nombre</mat-label>
-            <input matInput [(ngModel)]="record.nombre" maxlength="50" required>
+            <input matInput [(ngModel)]="record.nombre" maxlength="50" (input)="RG.name($event)" required>
         </mat-form-field>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Apellido Paterno</mat-label>
-            <input matInput [(ngModel)]="record.apellidoPaterno" maxlength="50" required>
+            <input matInput [(ngModel)]="record.apellidoPaterno" maxlength="50" (input)="RG.name($event)" required>
         </mat-form-field>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Apellido Materno</mat-label>
-            <input matInput [(ngModel)]="record.apellidoMaterno" maxlength="50" required>
+            <input matInput [(ngModel)]="record.apellidoMaterno" maxlength="50" (input)="RG.name($event)" required>
         </mat-form-field>
-
         <mat-form-field *ngIf="!record.id" appearance="fill" class="w-100">
             <mat-label>Cuenta</mat-label>
-            <input matInput [(ngModel)]="record.cuenta" maxlength="50" required>
+            <input matInput [(ngModel)]="record.cuenta" maxlength="50" (input)="RG.name($event)" required>
         </mat-form-field>
         <mat-slide-toggle *ngIf="record.id" [(ngModel)]="record.updatePassword" style="padding-bottom: 20px;">
             <span>¿Desea actualizar contraseña?</span>

@@ -8,7 +8,7 @@
         <div class="col-md-3 mb-3">
             <mat-form-field appearance="fill" class="w-100">
                 <mat-label>Buscar por Nombre</mat-label>
-                <input matInput [(ngModel)]="filter.nombre" maxlength="200">
+                <input matInput [(ngModel)]="filter.nombre" (input)="RG.name($event)" maxlength="200">
             </mat-form-field>
         </div>
 
@@ -49,7 +49,7 @@
     <mat-dialog-content>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Nombre</mat-label>
-            <input matInput [(ngModel)]="record.nombre" maxlength="200" required>
+            <input matInput [(ngModel)]="record.nombre" maxlength="200" (input)="RG.name($event)" required>
         </mat-form-field>
     </mat-dialog-content>
     <mat-dialog-actions align="end">

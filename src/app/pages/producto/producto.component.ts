@@ -15,6 +15,7 @@ import { ProductoResponse } from '../../model/api/response/ProductoResponse';
 import { ProductoRequest } from '../../model/api/request/ProductoRequest';
 import { ProductoService } from '../../service/master/producto.service';
 import { MatSelectModule } from '@angular/material/select';
+import { RegexConstants } from '../../util/constant';
 
 @Component({
   selector: 'app-producto',
@@ -30,6 +31,8 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrl: './producto.component.css'
 })
 export class ProductoComponent implements OnInit {
+
+  public RG = RegexConstants;
 
   listCategoria: Categoria[] = [];
 

@@ -10,3 +10,21 @@ export const HTTP_STATUS = {
     NOT_FOUND: 404,
     INTERNAL_SERVER_ERROR: 500
 };
+
+export class RegexConstants {
+    static number(event: any): void {
+        event.target.value = event.target.value.replace(/\D/g, '');
+    }
+    static name(event: any): void {
+        event.target.value = event.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s'-]/g, '');
+    }
+    static text(event: any): void {
+        event.target.value = event.target.value.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-.,&/#]/g, '');
+    }
+    static address(event: any): void {
+        event.target.value = event.target.value.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-,.#/]/g, '');
+    }
+    static email(event: any): void {
+        event.target.value = event.target.value.replace(/[^\w@.\-+]/g, '');
+    }
+}

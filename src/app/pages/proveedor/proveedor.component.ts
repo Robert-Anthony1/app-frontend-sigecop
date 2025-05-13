@@ -11,6 +11,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { RegexConstants } from '../../util/constant';
 
 @Component({
   selector: 'app-proveedor',
@@ -25,6 +26,8 @@ import { MatInputModule } from '@angular/material/input';
   styleUrl: './proveedor.component.css'
 })
 export class ProveedorComponent implements OnInit {
+
+  public RG = RegexConstants;
 
   result: Proveedor[] = [];
   filter: Proveedor = {};

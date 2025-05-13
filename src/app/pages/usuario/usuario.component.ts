@@ -20,6 +20,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectChange } from '@angular/material/select';
 import { RolRequest } from '../../model/api/request/RolRequest';
+import { RegexConstants } from '../../util/constant';
 
 @Component({
   selector: 'app-usuario',
@@ -36,6 +37,8 @@ import { RolRequest } from '../../model/api/request/RolRequest';
   styleUrl: './usuario.component.css'
 })
 export class UsuarioComponent implements OnInit {
+
+  public RG = RegexConstants;
 
   listRol: RolResponse[] = [];
   listProveedor: Proveedor[] = [];

@@ -16,6 +16,7 @@ import { PaginaService } from '../../service/security/pagina.service';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { Pagina } from '../../model/dto/Pagina';
+import { RegexConstants } from '../../util/constant';
 
 @Component({
   selector: 'app-rol',
@@ -32,6 +33,8 @@ import { Pagina } from '../../model/dto/Pagina';
   styleUrl: './rol.component.css'
 })
 export class RolComponent implements OnInit {
+
+  public RG = RegexConstants;
 
   listPagina: Pagina[] = [];
 

@@ -8,19 +8,19 @@
         <div class="col-md-3 mb-3">
             <mat-form-field appearance="fill" class="w-100">
                 <mat-label>Buscar por RUC</mat-label>
-                <input matInput [(ngModel)]="filter.ruc" class="only-numbers" maxlength="11">
+                <input matInput [(ngModel)]="filter.ruc" (input)="RG.number($event)" maxlength="11">
             </mat-form-field>
         </div>
         <div class="col-md-3 mb-3">
             <mat-form-field appearance="fill" class="w-100">
                 <mat-label>Buscar por Razón Social</mat-label>
-                <input matInput [(ngModel)]="filter.razonSocial" class="only-text" maxlength="255">
+                <input matInput [(ngModel)]="filter.razonSocial" (input)="RG.text($event)" maxlength="255">
             </mat-form-field>
         </div>
         <div class="col-md-3 mb-3">
             <mat-form-field appearance="fill" class="w-100">
                 <mat-label>Buscar por Nombre Comercial</mat-label>
-                <input matInput [(ngModel)]="filter.nombreComercial" class="only-text" maxlength="255">
+                <input matInput [(ngModel)]="filter.nombreComercial" (input)="RG.text($event)" maxlength="255">
             </mat-form-field>
         </div>
 
@@ -61,27 +61,27 @@
     <mat-dialog-content>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Ruc</mat-label>
-            <input matInput [(ngModel)]="record.ruc" class="only-numbers" maxlength="11" required>
+            <input matInput [(ngModel)]="record.ruc" (input)="RG.number($event)" maxlength="11" required>
         </mat-form-field>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Razón Social</mat-label>
-            <input matInput [(ngModel)]="record.razonSocial" class="only-text" maxlength="255" required>
+            <input matInput [(ngModel)]="record.razonSocial" (input)="RG.text($event)" maxlength="255" required>
         </mat-form-field>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Nombre Comercial</mat-label>
-            <input matInput [(ngModel)]="record.nombreComercial" class="only-text" maxlength="255" required>
+            <input matInput [(ngModel)]="record.nombreComercial" (input)="RG.text($event)" maxlength="255" required>
         </mat-form-field>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Dirección</mat-label>
-            <input matInput [(ngModel)]="record.direccion" maxlength="255">
+            <input matInput [(ngModel)]="record.direccion" (input)="RG.address($event)" maxlength="255">
         </mat-form-field>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Teléfono</mat-label>
-            <input matInput [(ngModel)]="record.telefono" class="only-numbers" maxlength="20">
+            <input matInput [(ngModel)]="record.telefono" (input)="RG.number($event)" maxlength="20">
         </mat-form-field>
         <mat-form-field appearance="fill" class="w-100">
             <mat-label>Correo</mat-label>
-            <input matInput [(ngModel)]="record.correo" maxlength="100">
+            <input matInput [(ngModel)]="record.correo" (input)="RG.email($event)" maxlength="100">
         </mat-form-field>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
