@@ -23,6 +23,7 @@ import { SolicitudProductoRequest } from '../../model/api/request/SolicitudProdu
 import { ProveedorService } from '../../service/master/proveedor.service';
 import { ProductoService } from '../../service/master/producto.service';
 import { RegexConstants } from '../../util/constant';
+import { CotizacionResponse } from '../../model/api/response/CotizacionResponse';
 
 
 
@@ -53,9 +54,11 @@ export class SolicitudComponent implements OnInit {
     listProductos: ProductoResponse[] = [];
     selectedProductos: SolicitudProductoRequest[] = [];
     selectedProveedores: number[] = [];
+    listCotizaciones: CotizacionResponse[] = [];
 
     @ViewChild('colAccionTemplate', { static: true }) colAccionTemplate!: TemplateRef<any>;
     @ViewChild('dialogTemplate', { static: true }) dialogTemplate!: TemplateRef<any>;
+    @ViewChild('viewCotizacionTemplate', { static: true }) viewCotizacionTemplate!: TemplateRef<any>;
     dialogRef!: MatDialogRef<any>;
 
     constructor(
@@ -105,16 +108,16 @@ export class SolicitudComponent implements OnInit {
             resultResponse: this.service.list(this.filter)
         }).subscribe({
             next: ({ resultResponse }) => {
-            console.log(resultResponse);
-            this.result = [...setListRow(resultResponse)];
-            this.initTable();
+                console.log(resultResponse);
+                this.result = [...setListRow(resultResponse)];
+                this.initTable();
             },
             error: (err) => {
-            Swal.close();
-            Swal.fire({
-                icon: 'warning',
-                title: '¡Advertencia!',
-                text: err.error,
+                Swal.close();
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¡Advertencia!',
+                    text: err.error,
                 });
             }
         });
@@ -171,6 +174,11 @@ export class SolicitudComponent implements OnInit {
 
 
         this.dialogRef = this.dialog.open(this.dialogTemplate, { width: '800px' });
+    }
+
+    openViewCotizaciones(item: SolicitudResponse) {
+
+        this.dialogRef = this.dialog.open(this.viewCotizacionTemplate, { width: '1000px' });
     }
 
     save() {
