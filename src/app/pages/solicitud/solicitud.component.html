@@ -97,12 +97,9 @@
         <!-- Campo Estado: Solo en edición -->
         <mat-form-field appearance="fill" class="w-100" *ngIf="record.id">
             <mat-label>Estado</mat-label>
-            <mat-select [(ngModel)]="record.estadoId" required>
-                <mat-option *ngFor="let est of listEstados" [value]="est.id">
-                    {{ est.descripcion }}
-                </mat-option>
-            </mat-select>
+            <input matInput [value]="getEstadoDescripcion(record.estadoId!)" disabled>
         </mat-form-field>
+
 
         <!-- Proveedores -->
         <h5 class="mt-3">Proveedores*</h5>

@@ -21,6 +21,10 @@ export class SolicitudService {
         return this.http.post<SolicitudResponse>(`${BASE_URL}/solicitud/save`, filter);
     }
 
+    find(filter: SolicitudRequest): Observable<SolicitudResponse> {
+        return this.http.post<SolicitudResponse>(`${BASE_URL}/solicitud/find`, filter);
+    }
+
     delete(id: any): Observable<SolicitudResponse> {
         return this.http.delete<SolicitudResponse>(`${BASE_URL}/solicitud/delete`, {
          body: {id: id}

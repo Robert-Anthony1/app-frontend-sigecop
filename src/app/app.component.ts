@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { StorageService } from './service/util/storage.service';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
+
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, FormsModule, CommonModule, NgxDatatableModule],

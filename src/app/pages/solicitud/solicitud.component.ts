@@ -101,7 +101,13 @@ export class SolicitudComponent implements OnInit{
 
 
     search() {
-        this.service.list(this.filter).subscribe({
+        const normalizedFilter: SolicitudRequest = {
+            ...this.filter,
+            codigo: this.filter.codigo?.trim().toUpperCase(), // " sc123 " → "SC123"
+            descripcion: this.filter.descripcion?.trim().toLowerCase() // Opcional: para búsq. case-insensitive
+        };
+
+        this.service.list(normalizedFilter).subscribe({
             next: (response) => {
                 this.result = setListRow(response);
                 this.initTable();
@@ -117,33 +123,50 @@ export class SolicitudComponent implements OnInit{
         this.selectedProductos = [];
         this.selectedProveedores = [];
         this.dialogRef = this.dialog.open(this.dialogTemplate, { width: '800px' });
-
-        this.cdr.detectChanges();
     }
 
     openEdit(item: SolicitudResponse) {
-        this.record = {
-            id: item.id,
-            codigo: item.codigo,
-            descripcion: item.descripcion,
-            fechaCreacion: item.fechaCreacion,
-            fechaVencimiento: item.fechaVencimiento,
-            estadoId: item.estado?.id
-        };
+        forkJoin({
+              resultResponse: this.service.find({ id: item.id })
+            }).subscribe({
+              next: ({ resultResponse }) => {
+                this.record = {
+                    id: resultResponse.id,                    
+                    codigo: resultResponse.codigo,
+                    descripcion: resultResponse.descripcion,
+                    fechaCreacion: resultResponse.fechaCreacion,
+                    fechaVencimiento: resultResponse.fechaVencimiento,
+                    estadoId: resultResponse.estado?.id,
+                    proveedores: (resultResponse.proveedores??[]).map(prov=>prov.id??0),
+                    solicitudProducto: (resultResponse.solicitudProducto??[]).map(sp=>{return {
+                        id: sp.id, 
+                        cantidad: sp.cantidad, 
+                        productoId: sp.producto?.id, 
+                        productoNombre: sp.producto?.nombre}}),                    
+                };                
+                    // Cargar proveedores seleccionados
+                    this.selectedProveedores = this.record.proveedores??[];
 
-        // Cargar proveedores seleccionados
-        this.selectedProveedores = item.proveedores?.map(p => p.id!) || [];
+                    // Cargar productos seleccionados (eliminando duplicados)
+                    this.selectedProductos =  this.record.solicitudProducto?.map(sp => ({
+                        id: sp.id,
+                        productoId: sp.productoId,
+                        cantidad: sp.cantidad,
+                        productoNombre: sp.productoNombre // Agregamos el nombre para mostrar
+                    })) || [];
+              },
+              error: (err) => {
+                Swal.close();
+                Swal.fire({
+                  icon: 'warning',
+                  title: '¡Advertencia!',
+                  text: err.error,
+                });
+              }
+            });
 
-        // Cargar productos seleccionados (eliminando duplicados)
-        this.selectedProductos =  item.solicitudProducto?.map(sp => ({
-            id: sp.id,
-            productoId: sp.producto?.id,
-            cantidad: sp.cantidad,
-            productoNombre: sp.producto?.nombre // Agregamos el nombre para mostrar
-        })) || [];
-
-        this.dialogRef = this.dialog.open(this.dialogTemplate, { width: '800px' });
-        this.cdr.detectChanges();
+       
+        this.dialogRef = this.dialog.open(this.dialogTemplate, { width: '800px' });        
     }
 
 
@@ -154,21 +177,36 @@ export class SolicitudComponent implements OnInit{
             Swal.fire('Error', 'Complete todos los campos obligatorios', 'error');
             return;
         }
+
+        if (new Date(this.record.fechaVencimiento) <= new Date(this.record.fechaCreacion)) {
+            Swal.fire('Error', 'La fecha de vencimiento debe ser mayor a la fecha de creación', 'error');
+            return;
+        }
+
+        if (this.record.descripcion?.length > 500) {
+            Swal.fire('Error', 'La descripción no puede exceder los 500 caracteres', 'error');
+            return;
+        }
+
         if (this.selectedProveedores.length === 0) {
             Swal.fire('Error', 'Seleccione al menos un proveedor', 'error');
             return;
         }
+
         if (this.selectedProductos.length === 0) {
             Swal.fire('Error', 'Agregue al menos un producto', 'error');
             return;
         }
+
         const productoInvalido = this.selectedProductos.some(p => 
             !p.productoId || !p.cantidad || p.cantidad <= 0
-        );        
+        ); 
+
         if (productoInvalido) {
             Swal.fire('Error', 'Todos los productos deben tener una cantidad válida', 'error');
             return;
         }
+
         this.record.proveedores = this.selectedProveedores;
         this.record.solicitudProducto = this.selectedProductos;
 
@@ -239,6 +277,11 @@ export class SolicitudComponent implements OnInit{
 
     removeProducto(index: number) {
         this.selectedProductos.splice(index, 1);
+    }
+
+    getEstadoDescripcion(estadoId?: number): string {
+        const estado = estadoId ? this.listEstados.find(e => e.id === estadoId) : null;
+        return estado?.descripcion ?? 'En proceso';
     }
 
     private initTable() {
