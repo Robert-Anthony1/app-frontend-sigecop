@@ -121,8 +121,8 @@
             <div class="col-md-7">
                 <mat-form-field appearance="fill" class="w-100">
                     <mat-label>Producto</mat-label>
-                    <mat-select [(ngModel)]="prod.productoId">
-                        <mat-option *ngFor="let p of listProductos" [value]="p.id">
+                    <mat-select [(ngModel)]="prod.productoId" required>
+                        <mat-option *ngFor="let p of getFilteredProductos(i)" [value]="p.id">
                             {{ p.nombre }}
                         </mat-option>
                     </mat-select>

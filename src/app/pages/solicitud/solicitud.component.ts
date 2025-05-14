@@ -130,38 +130,48 @@ export class SolicitudComponent implements OnInit{
             fechaVencimiento: item.fechaVencimiento,
             estadoId: item.estado?.id
         };
-        
+
+        // Cargar proveedores seleccionados
         this.selectedProveedores = item.proveedores?.map(p => p.id!) || [];
-        this.selectedProductos = item.solicitudProducto?.map(p => ({
-            id: p.id,
-            productoId: p.producto?.id,
-            cantidad: p.cantidad
+
+        // Cargar productos seleccionados (eliminando duplicados)
+        this.selectedProductos =  item.solicitudProducto?.map(sp => ({
+            id: sp.id,
+            productoId: sp.producto?.id,
+            cantidad: sp.cantidad,
+            productoNombre: sp.producto?.nombre // Agregamos el nombre para mostrar
         })) || [];
-        
+
         this.dialogRef = this.dialog.open(this.dialogTemplate, { width: '800px' });
-        
         this.cdr.detectChanges();
     }
 
-    save() {
-        const descripcionInvalida = !this.record.descripcion || this.record.descripcion.trim() === '';
-        const fechaCreacionInvalida = !this.record.fechaCreacion;
-        const fechaVencimientoInvalida = !this.record.fechaVencimiento;
-        const proveedoresInvalidos = !this.selectedProveedores || this.selectedProveedores.length === 0;
-        const productosInvalidos = !this.selectedProductos || this.selectedProductos.length === 0;
-        const productosConError = this.selectedProductos?.some(p => !p.productoId || !p.cantidad || p.cantidad <= 0);
 
-        if (descripcionInvalida || fechaCreacionInvalida || fechaVencimientoInvalida || 
-            proveedoresInvalidos || productosInvalidos || productosConError) {
-            Swal.fire('Error', 'Debe llenar todos los campos obligatorios.', 'error');
+    save() {
+        if (!this.record.descripcion?.trim() || 
+            !this.record.fechaCreacion || 
+            !this.record.fechaVencimiento) {
+            Swal.fire('Error', 'Complete todos los campos obligatorios', 'error');
             return;
         }
-
-        // Asignación de proveedores y productos al record
+        if (this.selectedProveedores.length === 0) {
+            Swal.fire('Error', 'Seleccione al menos un proveedor', 'error');
+            return;
+        }
+        if (this.selectedProductos.length === 0) {
+            Swal.fire('Error', 'Agregue al menos un producto', 'error');
+            return;
+        }
+        const productoInvalido = this.selectedProductos.some(p => 
+            !p.productoId || !p.cantidad || p.cantidad <= 0
+        );        
+        if (productoInvalido) {
+            Swal.fire('Error', 'Todos los productos deben tener una cantidad válida', 'error');
+            return;
+        }
         this.record.proveedores = this.selectedProveedores;
         this.record.solicitudProducto = this.selectedProductos;
 
-        // Guardar solicitud
         this.service.save(this.record).subscribe({
             next: (response) => {
                 Swal.fire('Éxito', 'Solicitud guardada correctamente', 'success');
@@ -199,32 +209,36 @@ export class SolicitudComponent implements OnInit{
         });
     }
 
+    getFilteredProductos(index: number): ProductoResponse[] {
+        const currentProductId = this.selectedProductos[index]?.productoId;
+        
+        return this.listProductos.filter(p => 
+            p.id === currentProductId || 
+            !this.selectedProductos.some(sp => sp.productoId === p.id)
+        );
+    }
+
+
     addProducto() {
-        this.selectedProductos.push({ productoId: undefined, cantidad: 1 });
+        const productosDisponibles = this.getAvailableProducts();        
+        if (productosDisponibles.length === 0) {
+            Swal.fire('Atención', 'Ya no hay más productos disponibles para agregar.', 'info');
+            return;
+        }        
+        this.selectedProductos.push({ 
+            productoId: productosDisponibles[0].id, 
+            cantidad: 1 
+        });
+    }
+
+    private getAvailableProducts(): ProductoResponse[] {
+        return this.listProductos.filter(p => 
+            !this.selectedProductos.some(sp => sp.productoId === p.id)
+        );
     }
 
     removeProducto(index: number) {
         this.selectedProductos.splice(index, 1);
-    }
-
-    private validateForm(): boolean {
-        if (!this.record.codigo || !this.record.descripcion || !this.record.fechaCreacion || 
-            !this.record.fechaVencimiento || !this.record.estadoId) {
-            Swal.fire('Advertencia', 'Complete todos los campos obligatorios', 'warning');
-            return false;
-        }
-        
-        if (this.selectedProveedores.length === 0) {
-            Swal.fire('Advertencia', 'Seleccione al menos un proveedor', 'warning');
-            return false;
-        }
-        
-        if (this.selectedProductos.length === 0) {
-            Swal.fire('Advertencia', 'Agregue al menos un producto', 'warning');
-            return false;
-        }
-        
-        return true;
     }
 
     private initTable() {
