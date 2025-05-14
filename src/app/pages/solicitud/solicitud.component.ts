@@ -144,11 +144,24 @@ export class SolicitudComponent implements OnInit{
     }
 
     save() {
-        if (!this.validateForm()) return;
-        
+        const descripcionInvalida = !this.record.descripcion || this.record.descripcion.trim() === '';
+        const fechaCreacionInvalida = !this.record.fechaCreacion;
+        const fechaVencimientoInvalida = !this.record.fechaVencimiento;
+        const proveedoresInvalidos = !this.selectedProveedores || this.selectedProveedores.length === 0;
+        const productosInvalidos = !this.selectedProductos || this.selectedProductos.length === 0;
+        const productosConError = this.selectedProductos?.some(p => !p.productoId || !p.cantidad || p.cantidad <= 0);
+
+        if (descripcionInvalida || fechaCreacionInvalida || fechaVencimientoInvalida || 
+            proveedoresInvalidos || productosInvalidos || productosConError) {
+            Swal.fire('Error', 'Debe llenar todos los campos obligatorios.', 'error');
+            return;
+        }
+
+        // Asignación de proveedores y productos al record
         this.record.proveedores = this.selectedProveedores;
         this.record.solicitudProducto = this.selectedProductos;
-        
+
+        // Guardar solicitud
         this.service.save(this.record).subscribe({
             next: (response) => {
                 Swal.fire('Éxito', 'Solicitud guardada correctamente', 'success');
@@ -160,6 +173,7 @@ export class SolicitudComponent implements OnInit{
             }
         });
     }
+
 
     delete(item: SolicitudResponse) {
         Swal.fire({
