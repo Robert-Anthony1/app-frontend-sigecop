@@ -101,19 +101,21 @@ export class SolicitudComponent implements OnInit{
 
 
     search() {
-        const normalizedFilter: SolicitudRequest = {
-            ...this.filter,
-            codigo: this.filter.codigo?.trim().toUpperCase(), // " sc123 " → "SC123"
-            descripcion: this.filter.descripcion?.trim().toLowerCase() // Opcional: para búsq. case-insensitive
-        };
-
-        this.service.list(normalizedFilter).subscribe({
-            next: (response) => {
-                this.result = setListRow(response);
-                this.initTable();
+        forkJoin({
+            resultResponse: this.service.list(this.filter)
+        }).subscribe({
+            next: ({ resultResponse }) => {
+            console.log(resultResponse);
+            this.result = [...setListRow(resultResponse)];
+            this.initTable();
             },
             error: (err) => {
-                this.handleError(err);
+            Swal.close();
+            Swal.fire({
+                icon: 'warning',
+                title: '¡Advertencia!',
+                text: err.error,
+                });
             }
         });
     }
