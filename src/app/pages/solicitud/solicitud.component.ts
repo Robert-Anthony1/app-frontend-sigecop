@@ -1,5 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { ChangeDetectorRef } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
@@ -22,6 +23,7 @@ import { SolicitudProductoRequest } from '../../model/api/request/SolicitudProdu
 import { ProveedorService } from '../../service/master/proveedor.service';
 import { ProductoService } from '../../service/master/producto.service';
 import { RegexConstants } from '../../util/constant';
+
 
 
 @Component({
@@ -61,7 +63,8 @@ export class SolicitudComponent implements OnInit{
         private service: SolicitudService,
         private estadoService: EstadoSolicitudService,
         private proveedorService: ProveedorService,
-        private productoService: ProductoService
+        private productoService: ProductoService,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
@@ -91,6 +94,12 @@ export class SolicitudComponent implements OnInit{
         this.search();
     }
 
+    private handleError(err: any) {
+        const errorMessage = err?.error?.message || err?.error || 'Ocurrió un error inesperado';
+        Swal.fire('Error', errorMessage, 'error');
+    }
+
+
     search() {
         this.service.list(this.filter).subscribe({
             next: (response) => {
@@ -98,7 +107,7 @@ export class SolicitudComponent implements OnInit{
                 this.initTable();
             },
             error: (err) => {
-                Swal.fire('Error', err.error, 'error');
+                this.handleError(err);
             }
         });
     }
@@ -108,6 +117,8 @@ export class SolicitudComponent implements OnInit{
         this.selectedProductos = [];
         this.selectedProveedores = [];
         this.dialogRef = this.dialog.open(this.dialogTemplate, { width: '800px' });
+
+        this.cdr.detectChanges();
     }
 
     openEdit(item: SolicitudResponse) {
@@ -119,23 +130,48 @@ export class SolicitudComponent implements OnInit{
             fechaVencimiento: item.fechaVencimiento,
             estadoId: item.estado?.id
         };
-        
+
+        // Cargar proveedores seleccionados
         this.selectedProveedores = item.proveedores?.map(p => p.id!) || [];
-        this.selectedProductos = item.solicitudProducto?.map(p => ({
-            id: p.id,
-            productoId: p.producto?.id,
-            cantidad: p.cantidad
+
+        // Cargar productos seleccionados (eliminando duplicados)
+        this.selectedProductos =  item.solicitudProducto?.map(sp => ({
+            id: sp.id,
+            productoId: sp.producto?.id,
+            cantidad: sp.cantidad,
+            productoNombre: sp.producto?.nombre // Agregamos el nombre para mostrar
         })) || [];
-        
+
         this.dialogRef = this.dialog.open(this.dialogTemplate, { width: '800px' });
+        this.cdr.detectChanges();
     }
 
+
     save() {
-        if (!this.validateForm()) return;
-        
+        if (!this.record.descripcion?.trim() || 
+            !this.record.fechaCreacion || 
+            !this.record.fechaVencimiento) {
+            Swal.fire('Error', 'Complete todos los campos obligatorios', 'error');
+            return;
+        }
+        if (this.selectedProveedores.length === 0) {
+            Swal.fire('Error', 'Seleccione al menos un proveedor', 'error');
+            return;
+        }
+        if (this.selectedProductos.length === 0) {
+            Swal.fire('Error', 'Agregue al menos un producto', 'error');
+            return;
+        }
+        const productoInvalido = this.selectedProductos.some(p => 
+            !p.productoId || !p.cantidad || p.cantidad <= 0
+        );        
+        if (productoInvalido) {
+            Swal.fire('Error', 'Todos los productos deben tener una cantidad válida', 'error');
+            return;
+        }
         this.record.proveedores = this.selectedProveedores;
         this.record.solicitudProducto = this.selectedProductos;
-        
+
         this.service.save(this.record).subscribe({
             next: (response) => {
                 Swal.fire('Éxito', 'Solicitud guardada correctamente', 'success');
@@ -143,10 +179,11 @@ export class SolicitudComponent implements OnInit{
                 this.dialogRef.close();
             },
             error: (err) => {
-                Swal.fire('Error', err.error, 'error');
+                this.handleError(err);
             }
         });
     }
+
 
     delete(item: SolicitudResponse) {
         Swal.fire({
@@ -158,45 +195,50 @@ export class SolicitudComponent implements OnInit{
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                this.service.delete(item.id!).subscribe({
+                this.service.delete(item.id).subscribe({
                     next: () => {
                         Swal.fire('Éxito', 'Solicitud eliminada', 'success');
                         this.search();
+                        this.cdr.detectChanges();
                     },
                     error: (err) => {
-                        Swal.fire('Error', err.error, 'error');
+                        this.handleError(err);
                     }
                 });
             }
         });
     }
 
+    getFilteredProductos(index: number): ProductoResponse[] {
+        const currentProductId = this.selectedProductos[index]?.productoId;
+        
+        return this.listProductos.filter(p => 
+            p.id === currentProductId || 
+            !this.selectedProductos.some(sp => sp.productoId === p.id)
+        );
+    }
+
+
     addProducto() {
-        this.selectedProductos.push({ productoId: undefined, cantidad: 1 });
+        const productosDisponibles = this.getAvailableProducts();        
+        if (productosDisponibles.length === 0) {
+            Swal.fire('Atención', 'Ya no hay más productos disponibles para agregar.', 'info');
+            return;
+        }        
+        this.selectedProductos.push({ 
+            productoId: productosDisponibles[0].id, 
+            cantidad: 1 
+        });
+    }
+
+    private getAvailableProducts(): ProductoResponse[] {
+        return this.listProductos.filter(p => 
+            !this.selectedProductos.some(sp => sp.productoId === p.id)
+        );
     }
 
     removeProducto(index: number) {
         this.selectedProductos.splice(index, 1);
-    }
-
-    private validateForm(): boolean {
-        if (!this.record.codigo || !this.record.descripcion || !this.record.fechaCreacion || 
-            !this.record.fechaVencimiento || !this.record.estadoId) {
-            Swal.fire('Advertencia', 'Complete todos los campos obligatorios', 'warning');
-            return false;
-        }
-        
-        if (this.selectedProveedores.length === 0) {
-            Swal.fire('Advertencia', 'Seleccione al menos un proveedor', 'warning');
-            return false;
-        }
-        
-        if (this.selectedProductos.length === 0) {
-            Swal.fire('Advertencia', 'Agregue al menos un producto', 'warning');
-            return false;
-        }
-        
-        return true;
     }
 
     private initTable() {
