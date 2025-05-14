@@ -1,0 +1,91 @@
+.modal-cotizaciones {
+    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f9f9f9;
+}
+
+.titulo-modal {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+}
+
+.tabla-container {
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+.tabla-cotizaciones {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.tabla-cotizaciones th,
+.tabla-cotizaciones td {
+    border: 1px solid #ddd;
+    padding: 12px 10px;
+    text-align: left;
+}
+
+.tabla-cotizaciones th {
+    background-color: #007acc;
+    color: white;
+    font-weight: 500;
+}
+
+.tabla-cotizaciones tbody tr:hover {
+    background-color: #eef6ff;
+    cursor: pointer;
+}
+
+.btn-estado,
+.btn-ver,
+.btn-eliminar {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    margin-right: 8px;
+    transition: transform 0.2s ease;
+}
+
+.btn-estado:hover {
+    color: #ffc107;
+    transform: scale(1.2);
+}
+
+.btn-ver:hover {
+    color: #17a2b8;
+    transform: scale(1.2);
+}
+
+.btn-eliminar:hover {
+    color: #dc3545;
+    transform: scale(1.2);
+}
+
+.acciones-modal {
+    text-align: right;
+}
+
+.btn-cerrar {
+    background-color: #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-cerrar:hover {
+    background-color: #5a6268;
+}
+
+.ancho-personalizado {
+    width: 100%;
+}
