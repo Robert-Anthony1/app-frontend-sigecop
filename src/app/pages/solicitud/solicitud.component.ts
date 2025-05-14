@@ -173,7 +173,6 @@ export class SolicitudComponent implements OnInit {
         this.dialogRef = this.dialog.open(this.dialogTemplate, { width: '800px' });
     }
 
-
     save() {
         if (!this.record.descripcion?.trim() ||
             !this.record.fechaCreacion) {
