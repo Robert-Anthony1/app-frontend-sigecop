@@ -1,6 +1,6 @@
 import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
@@ -14,6 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withInterceptorsFromDi()),
+    provideNativeDateAdapter(),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LoadingInterceptor,

@@ -1,5 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { ChangeDetectorRef } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
@@ -22,6 +23,7 @@ import { SolicitudProductoRequest } from '../../model/api/request/SolicitudProdu
 import { ProveedorService } from '../../service/master/proveedor.service';
 import { ProductoService } from '../../service/master/producto.service';
 import { RegexConstants } from '../../util/constant';
+
 
 
 @Component({
@@ -61,7 +63,8 @@ export class SolicitudComponent implements OnInit{
         private service: SolicitudService,
         private estadoService: EstadoSolicitudService,
         private proveedorService: ProveedorService,
-        private productoService: ProductoService
+        private productoService: ProductoService,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
@@ -91,6 +94,12 @@ export class SolicitudComponent implements OnInit{
         this.search();
     }
 
+    private handleError(err: any) {
+        const errorMessage = err?.error?.message || err?.error || 'Ocurrió un error inesperado';
+        Swal.fire('Error', errorMessage, 'error');
+    }
+
+
     search() {
         this.service.list(this.filter).subscribe({
             next: (response) => {
@@ -98,7 +107,7 @@ export class SolicitudComponent implements OnInit{
                 this.initTable();
             },
             error: (err) => {
-                Swal.fire('Error', err.error, 'error');
+                this.handleError(err);
             }
         });
     }
@@ -108,6 +117,8 @@ export class SolicitudComponent implements OnInit{
         this.selectedProductos = [];
         this.selectedProveedores = [];
         this.dialogRef = this.dialog.open(this.dialogTemplate, { width: '800px' });
+
+        this.cdr.detectChanges();
     }
 
     openEdit(item: SolicitudResponse) {
@@ -128,6 +139,8 @@ export class SolicitudComponent implements OnInit{
         })) || [];
         
         this.dialogRef = this.dialog.open(this.dialogTemplate, { width: '800px' });
+        
+        this.cdr.detectChanges();
     }
 
     save() {
@@ -143,7 +156,7 @@ export class SolicitudComponent implements OnInit{
                 this.dialogRef.close();
             },
             error: (err) => {
-                Swal.fire('Error', err.error, 'error');
+                this.handleError(err);
             }
         });
     }
@@ -158,13 +171,14 @@ export class SolicitudComponent implements OnInit{
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                this.service.delete(item.id!).subscribe({
+                this.service.delete(item.id).subscribe({
                     next: () => {
                         Swal.fire('Éxito', 'Solicitud eliminada', 'success');
                         this.search();
+                        this.cdr.detectChanges();
                     },
                     error: (err) => {
-                        Swal.fire('Error', err.error, 'error');
+                        this.handleError(err);
                     }
                 });
             }
