@@ -183,6 +183,10 @@
                                 style="margin-left: 5px;">
                                 <i class="fa-solid fa-check"></i>
                             </button>
+                            <button class="btn btn-primary btn-sm" *ngIf="row.estado?.id==1 && !solicitudFinalizadoSelect" (click)="visualizarCotizacion(row)"
+                                style="margin-left: 5px;">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
                         </td>
                     </tr>
                 </tbody>

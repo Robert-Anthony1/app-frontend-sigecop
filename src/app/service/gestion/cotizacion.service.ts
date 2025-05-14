@@ -31,6 +31,10 @@ export class CotizacionService {
         });
     }
 
+    visualizar(filter: CotizacionRequest): Observable<CotizacionResponse> {
+        return this.http.post<CotizacionResponse>(`${BASE_URL}/solicitud/visualizar`, filter);
+    }
+
     aprobar(filter: CotizacionRequest): Observable<any> {
         return this.http.post<any>(`${BASE_URL}/cotizacion/aprobar`, filter);
     }

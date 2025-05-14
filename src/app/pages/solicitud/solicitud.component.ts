@@ -47,6 +47,7 @@ export class SolicitudComponent implements OnInit {
 
     solicitudFinalizadoSelect?: Boolean;
     solicitudIdSelect?: number;
+    cotizacionIdSelect?: number;
     result: SolicitudResponse[] = [];
     filter: SolicitudRequest = {};
     record: SolicitudRequest = {};
@@ -207,6 +208,26 @@ export class SolicitudComponent implements OnInit {
         this.dialogRef = this.dialog.open(this.viewCotizacionTemplate, {
             width: '1000px',
             maxWidth: 'none'
+        });
+    }
+
+    visualizarCotizacion(item: CotizacionResponse) {
+        this.cotizacionIdSelect = item.id;
+         Swal.fire({
+            title: 'COTIZACION ${cotizacionIdSelect}',
+            confirmButtonText: 'Volver'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.cotizacionService.visualizar({ id: item.id }).subscribe({
+                    next: () => {
+                        this.searchCotizaciones(this.solicitudIdSelect);
+                        this.search();
+                    },
+                    error: (err) => {
+                        this.handleError(err);
+                    }
+                });
+            }
         });
     }
 
