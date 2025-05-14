@@ -25,10 +25,14 @@ export class SolicitudService {
         return this.http.post<SolicitudResponse>(`${BASE_URL}/solicitud/find`, filter);
     }
 
+    finalizar(filter: SolicitudRequest): Observable<any> {
+        return this.http.post<any>(`${BASE_URL}/solicitud/finalizar`, filter);
+    }
+
     delete(id: any): Observable<SolicitudResponse> {
         return this.http.delete<SolicitudResponse>(`${BASE_URL}/solicitud/delete`, {
-         body: {id: id}
-    });
+            body: { id: id }
+        });
     }
 
 }

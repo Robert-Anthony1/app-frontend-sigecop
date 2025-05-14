@@ -27,27 +27,27 @@ import { RegexConstants } from '../../util/constant';
 
 
 @Component({
-  selector: 'app-solicitud',
-  imports: [CommonModule,
-    NgxDatatableModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    FormsModule],
-  templateUrl: './solicitud.component.html',
-  styleUrl: './solicitud.component.css'
+    selector: 'app-solicitud',
+    imports: [CommonModule,
+        NgxDatatableModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        FormsModule],
+    templateUrl: './solicitud.component.html',
+    styleUrl: './solicitud.component.css'
 })
-export class SolicitudComponent implements OnInit{
+export class SolicitudComponent implements OnInit {
     public RG = RegexConstants;
 
     result: SolicitudResponse[] = [];
     filter: SolicitudRequest = {};
     record: SolicitudRequest = {};
     columns: any[] = [];
-    
+
     listEstados: EstadoSolicitudResponse[] = [];
     listProveedores: Proveedor[] = [];
     listProductos: ProductoResponse[] = [];
@@ -127,59 +127,55 @@ export class SolicitudComponent implements OnInit{
 
     openEdit(item: SolicitudResponse) {
         forkJoin({
-              resultResponse: this.service.find({ id: item.id })
-            }).subscribe({
-              next: ({ resultResponse }) => {
+            resultResponse: this.service.find({ id: item.id })
+        }).subscribe({
+            next: ({ resultResponse }) => {
                 this.record = {
-                    id: resultResponse.id,                    
+                    id: resultResponse.id,
                     codigo: resultResponse.codigo,
                     descripcion: resultResponse.descripcion,
                     fechaCreacion: resultResponse.fechaCreacion,
-                    fechaVencimiento: resultResponse.fechaVencimiento,
                     estadoId: resultResponse.estado?.id,
-                    proveedores: (resultResponse.proveedores??[]).map(prov=>prov.id??0),
-                    solicitudProducto: (resultResponse.solicitudProducto??[]).map(sp=>{return {
-                        id: sp.id, 
-                        cantidad: sp.cantidad, 
-                        productoId: sp.producto?.id, 
-                        productoNombre: sp.producto?.nombre}}),                    
-                };                
-                    // Cargar proveedores seleccionados
-                    this.selectedProveedores = this.record.proveedores??[];
+                    proveedores: (resultResponse.proveedores ?? []).map(prov => prov.id ?? 0),
+                    solicitudProducto: (resultResponse.solicitudProducto ?? []).map(sp => {
+                        return {
+                            id: sp.id,
+                            cantidad: sp.cantidad,
+                            productoId: sp.producto?.id,
+                            productoNombre: sp.producto?.nombre
+                        }
+                    }),
+                };
+                // Cargar proveedores seleccionados
+                this.selectedProveedores = this.record.proveedores ?? [];
 
-                    // Cargar productos seleccionados (eliminando duplicados)
-                    this.selectedProductos =  this.record.solicitudProducto?.map(sp => ({
-                        id: sp.id,
-                        productoId: sp.productoId,
-                        cantidad: sp.cantidad,
-                        productoNombre: sp.productoNombre // Agregamos el nombre para mostrar
-                    })) || [];
-              },
-              error: (err) => {
+                // Cargar productos seleccionados (eliminando duplicados)
+                this.selectedProductos = this.record.solicitudProducto?.map(sp => ({
+                    id: sp.id,
+                    productoId: sp.productoId,
+                    cantidad: sp.cantidad,
+                    productoNombre: sp.productoNombre // Agregamos el nombre para mostrar
+                })) || [];
+            },
+            error: (err) => {
                 Swal.close();
                 Swal.fire({
-                  icon: 'warning',
-                  title: '¡Advertencia!',
-                  text: err.error,
+                    icon: 'warning',
+                    title: '¡Advertencia!',
+                    text: err.error,
                 });
-              }
-            });
+            }
+        });
 
-       
-        this.dialogRef = this.dialog.open(this.dialogTemplate, { width: '800px' });        
+
+        this.dialogRef = this.dialog.open(this.dialogTemplate, { width: '800px' });
     }
 
 
     save() {
-        if (!this.record.descripcion?.trim() || 
-            !this.record.fechaCreacion || 
-            !this.record.fechaVencimiento) {
+        if (!this.record.descripcion?.trim() ||
+            !this.record.fechaCreacion) {
             Swal.fire('Error', 'Complete todos los campos obligatorios', 'error');
-            return;
-        }
-
-        if (new Date(this.record.fechaVencimiento) <= new Date(this.record.fechaCreacion)) {
-            Swal.fire('Error', 'La fecha de vencimiento debe ser mayor a la fecha de creación', 'error');
             return;
         }
 
@@ -198,9 +194,9 @@ export class SolicitudComponent implements OnInit{
             return;
         }
 
-        const productoInvalido = this.selectedProductos.some(p => 
+        const productoInvalido = this.selectedProductos.some(p =>
             !p.productoId || !p.cantidad || p.cantidad <= 0
-        ); 
+        );
 
         if (productoInvalido) {
             Swal.fire('Error', 'Todos los productos deben tener una cantidad válida', 'error');
@@ -247,30 +243,54 @@ export class SolicitudComponent implements OnInit{
         });
     }
 
+    finalizar(item: SolicitudResponse) {
+        Swal.fire({
+            title: 'Confirmar finalización',
+            text: `¿Está seguro de finalizar la solicitud ${item.codigo}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, finalizar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.service.finalizar({ id: item.id }).subscribe({
+                    next: () => {
+                        Swal.fire('Éxito', 'Solicitud finalizada', 'success');
+                        this.search();
+                        this.cdr.detectChanges();
+                    },
+                    error: (err) => {
+                        this.handleError(err);
+                    }
+                });
+            }
+        });
+    }
+
     getFilteredProductos(index: number): ProductoResponse[] {
         const currentProductId = this.selectedProductos[index]?.productoId;
-        
-        return this.listProductos.filter(p => 
-            p.id === currentProductId || 
+
+        return this.listProductos.filter(p =>
+            p.id === currentProductId ||
             !this.selectedProductos.some(sp => sp.productoId === p.id)
         );
     }
 
 
     addProducto() {
-        const productosDisponibles = this.getAvailableProducts();        
+        const productosDisponibles = this.getAvailableProducts();
         if (productosDisponibles.length === 0) {
             Swal.fire('Atención', 'Ya no hay más productos disponibles para agregar.', 'info');
             return;
-        }        
-        this.selectedProductos.push({ 
-            productoId: productosDisponibles[0].id, 
-            cantidad: 1 
+        }
+        this.selectedProductos.push({
+            productoId: productosDisponibles[0].id,
+            cantidad: 1
         });
     }
 
     private getAvailableProducts(): ProductoResponse[] {
-        return this.listProductos.filter(p => 
+        return this.listProductos.filter(p =>
             !this.selectedProductos.some(sp => sp.productoId === p.id)
         );
     }
@@ -291,7 +311,7 @@ export class SolicitudComponent implements OnInit{
             { name: 'Descripción', prop: 'descripcion' },
             { name: 'Estado', prop: 'estado.descripcion', width: 120 },
             { name: 'F. Creación', prop: 'fechaCreacion', pipe: { transform: (d: Date) => d ? new Date(d).toLocaleDateString() : '' }, width: 120 },
-            { name: 'F. Vencimiento', prop: 'fechaVencimiento', pipe: { transform: (d: Date) => d ? new Date(d).toLocaleDateString() : '' }, width: 120 },
+            { name: 'F. Finalizado', prop: 'fechaFinalizado', pipe: { transform: (d: Date) => d ? new Date(d).toLocaleDateString() : '' }, width: 120 },
             { name: 'Acciones', cellTemplate: this.colAccionTemplate, width: 120 }
         ];
     }

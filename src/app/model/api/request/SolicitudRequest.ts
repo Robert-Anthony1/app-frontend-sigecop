@@ -6,7 +6,6 @@ export class SolicitudRequest{
     codigo?: String;
     descripcion?: string;
     fechaCreacion?: Date;
-    fechaVencimiento?: Date;
     estadoId?: number;
     proveedores?: number[] = [];
     solicitudProducto?: SolicitudProductoRequest[] = [];

@@ -10,10 +10,11 @@ export class SolicitudResponse extends ClassGeneric {
     codigo?: string;
     descripcion?: string;
     fechaCreacion?: Date;
-    fechaVencimiento?: Date;
+    fechaFinalizado?: Date;
     usuarioCreacion?: UserResponse;
     usuarioEstado?: UserResponse;
     estado?: EstadoSolicitudResponse;
+    finalizado?: Boolean;
     proveedores?: Proveedor[] = [];
     solicitudProducto?: SolicitudProductoResponse[] = [];
 }
