@@ -109,7 +109,7 @@
         </mat-form-field>
         <mat-form-field *ngIf="!record.id" appearance="fill" class="w-100">
             <mat-label>Cuenta</mat-label>
-            <input matInput [(ngModel)]="record.cuenta" maxlength="50" (input)="RG.name($event)" required>
+            <input matInput [(ngModel)]="record.cuenta" maxlength="50" (input)="RG.username($event)" required>
         </mat-form-field>
         <mat-slide-toggle *ngIf="record.id" [(ngModel)]="record.updatePassword" style="padding-bottom: 20px;">
             <span>¿Desea actualizar contraseña?</span>

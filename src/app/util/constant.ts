@@ -27,4 +27,7 @@ export class RegexConstants {
     static email(event: any): void {
         event.target.value = event.target.value.replace(/[^\w@.\-+]/g, '');
     }
+    static username(event: any): void {
+        event.target.value = event.target.value.replace(/[^a-zA-Z0-9_]/g, '');
+    }
 }
