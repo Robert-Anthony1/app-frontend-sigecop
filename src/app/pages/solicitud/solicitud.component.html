@@ -53,10 +53,11 @@
     [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'">
 
     <ng-template #colAccionTemplate let-row="row">
-        <button class="btn btn-primary btn-sm"  (click)="openViewCotizaciones(row)">
+        <button class="btn btn-primary btn-sm" (click)="openViewCotizaciones(row)">
             <i class="fas fa-list"></i>
         </button>
-        <button class="btn btn-warning btn-sm" style="margin-left: 5px;" (click)="openEdit(row)" *ngIf="!row.finalizado">
+        <button class="btn btn-warning btn-sm" style="margin-left: 5px;" (click)="openEdit(row)"
+            *ngIf="!row.finalizado">
             <i class="fas fa-pencil"></i>
         </button>
         <button class="btn btn-info btn-sm" style="margin-left: 5px;" (click)="finalizar(row)" *ngIf="!row.finalizado">
@@ -151,32 +152,45 @@
 </ng-template>
 
 <ng-template #viewCotizacionTemplate>
-  <h2 mat-dialog-title>Cotizaciones</h2>
+    <div class="modal-cotizaciones ancho-personalizado">
+        <h2 class="titulo-modal">Cotizaciones</h2>
 
-  <mat-dialog-content class="mt-2">
-    <table class="table table-bordered table-sm">
-      <thead class="thead-light">
-        <tr>
-          <th>Nro.</th>
-          <th>Código</th>
-          <th>Proveedor</th>
-          <th>Estado</th>
-          <th>Comentario</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of listCotizaciones">
-          <td>{{ item.row }}</td>
-          <td>{{ item.codigo }}</td>
-          <td>{{ item.solicitudProveedor?.proveedor?.ruc }} - {{ item.solicitudProveedor?.proveedor?.razonSocial }}</td>
-          <td>{{ item.estado?.descripcion }}</td>
-          <td>{{ item.comentario }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </mat-dialog-content>
+        <div class="tabla-container">
+            <table class="tabla-cotizaciones">
+                <thead>
+                    <tr>
+                        <th>Nro.</th>
+                        <th>Código</th>
+                        <th>Proveedor</th>
+                        <th>Estado</th>
+                        <th>Comentario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of listCotizaciones">
+                        <td>{{ row.row }}</td>
+                        <td>{{ row.codigo }}</td>
+                        <td>{{ row.solicitudProveedor?.proveedor?.ruc }} - {{
+                            row.solicitudProveedor?.proveedor?.razonSocial}}</td>
+                        <td>{{ row.estado?.descripcion }}</td>
+                        <td>{{ row.comentario }}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" *ngIf="row.estado?.id==1 && !solicitudFinalizadoSelect" (click)="archivarCotizacion(row)">
+                                <i class="fa-solid fa-xmark"></i> 
+                            </button>
+                            <button class="btn btn-success btn-sm" *ngIf="row.estado?.id==1 && !solicitudFinalizadoSelect" (click)="aprobarCotizacion(row)"
+                                style="margin-left: 5px;">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-  <mat-dialog-actions align="end">
-    <button mat-button (click)="dialogRef.close()">Cerrar</button>
-  </mat-dialog-actions>
+        <div class="acciones-modal">
+            <button class="btn-cerrar" (click)="dialogRef.close()">Cerrar</button>
+        </div>
+    </div>
 </ng-template>

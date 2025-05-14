@@ -24,6 +24,7 @@ import { ProveedorService } from '../../service/master/proveedor.service';
 import { ProductoService } from '../../service/master/producto.service';
 import { RegexConstants } from '../../util/constant';
 import { CotizacionResponse } from '../../model/api/response/CotizacionResponse';
+import { CotizacionService } from '../../service/gestion/cotizacion.service';
 
 
 
@@ -44,10 +45,13 @@ import { CotizacionResponse } from '../../model/api/response/CotizacionResponse'
 export class SolicitudComponent implements OnInit {
     public RG = RegexConstants;
 
+    solicitudFinalizadoSelect?: Boolean;
+    solicitudIdSelect?: number;
     result: SolicitudResponse[] = [];
     filter: SolicitudRequest = {};
     record: SolicitudRequest = {};
     columns: any[] = [];
+    columnsCotizacion: any[] = [];
 
     listEstados: EstadoSolicitudResponse[] = [];
     listProveedores: Proveedor[] = [];
@@ -58,6 +62,7 @@ export class SolicitudComponent implements OnInit {
 
     @ViewChild('colAccionTemplate', { static: true }) colAccionTemplate!: TemplateRef<any>;
     @ViewChild('dialogTemplate', { static: true }) dialogTemplate!: TemplateRef<any>;
+
     @ViewChild('viewCotizacionTemplate', { static: true }) viewCotizacionTemplate!: TemplateRef<any>;
     dialogRef!: MatDialogRef<any>;
 
@@ -67,6 +72,7 @@ export class SolicitudComponent implements OnInit {
         private estadoService: EstadoSolicitudService,
         private proveedorService: ProveedorService,
         private productoService: ProductoService,
+        private cotizacionService: CotizacionService,
         private cdr: ChangeDetectorRef
     ) { }
 
@@ -108,7 +114,6 @@ export class SolicitudComponent implements OnInit {
             resultResponse: this.service.list(this.filter)
         }).subscribe({
             next: ({ resultResponse }) => {
-                console.log(resultResponse);
                 this.result = [...setListRow(resultResponse)];
                 this.initTable();
             },
@@ -176,9 +181,81 @@ export class SolicitudComponent implements OnInit {
         this.dialogRef = this.dialog.open(this.dialogTemplate, { width: '800px' });
     }
 
-    openViewCotizaciones(item: SolicitudResponse) {
+    searchCotizaciones(solicitudId: any) {
+        forkJoin({
+            resultResponse: this.cotizacionService.list({ solicitudId: solicitudId })
+        }).subscribe({
+            next: ({ resultResponse }) => {
+                this.listCotizaciones = [...setListRow(resultResponse ?? [])];
+            },
+            error: (err) => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¡Advertencia!',
+                    text: err.error,
+                });
+            }
+        });
+    }
 
-        this.dialogRef = this.dialog.open(this.viewCotizacionTemplate, { width: '1000px' });
+
+    openViewCotizaciones(item: SolicitudResponse) {
+        this.solicitudIdSelect = item.id;
+        this.solicitudFinalizadoSelect = item.finalizado;
+        this.searchCotizaciones(item.id);
+        this.dialogRef = this.dialog.open(this.viewCotizacionTemplate, {
+            width: '1000px',
+            maxWidth: 'none'
+        });
+    }
+
+    archivarCotizacion(item: CotizacionResponse) {
+        Swal.fire({
+            title: 'Confirmar archivar',
+            text: `¿Está seguro de archivar la cotización ${item.codigo}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, archivar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.cotizacionService.archivar({ id: item.id }).subscribe({
+                    next: () => {
+                        Swal.fire('Éxito', 'Cotización archivada', 'success');
+                        this.searchCotizaciones(this.solicitudIdSelect);
+                        this.cdr.detectChanges();
+                    },
+                    error: (err) => {
+                        this.handleError(err);
+                    }
+                });
+            }
+        });
+    }
+    aprobarCotizacion(item: CotizacionResponse) {
+        Swal.fire({
+            title: 'Confirmar aprobar',
+            text: `¿Está seguro de aprobar la cotización ${item.codigo}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, aprobar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.cotizacionService.aprobar({ id: item.id }).subscribe({
+                    next: () => {
+                        Swal.fire('Éxito', 'Cotización aprobada', 'success');
+                        this.searchCotizaciones(this.solicitudIdSelect);
+                        this.search();
+                        this.cdr.detectChanges();
+                    },
+                    error: (err) => {
+                        this.handleError(err);
+                    }
+                });
+            }
+        });
     }
 
     save() {
@@ -324,4 +401,6 @@ export class SolicitudComponent implements OnInit {
             { name: 'Acciones', cellTemplate: this.colAccionTemplate, width: 120 }
         ];
     }
+
+
 }
