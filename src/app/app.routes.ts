@@ -10,6 +10,7 @@ import { CategoriaComponent } from './pages/categoria/categoria.component';
 import { SolicitudComponent } from './pages/solicitud/solicitud.component';
 import { PaginaComponent } from './pages/pagina/pagina.component';
 import { RolComponent } from './pages/rol/rol.component';
+import { SolicitudProveedorComponent } from './pages/solicitud-proveedor/solicitud-proveedor.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -21,7 +22,8 @@ export const routes: Routes = [
             { path: 'Categoria', component: CategoriaComponent },
             { path: 'Producto', component: ProductoComponent },
             { path: 'Pagina', component: PaginaComponent },
-            { path: 'Rol', component: RolComponent }
+            { path: 'Rol', component: RolComponent },
+            { path: 'SolicitudProveedor', component: SolicitudProveedorComponent }
         ]
     },
     { path: 'loading', component: LoadingComponent },
